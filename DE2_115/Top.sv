@@ -26,9 +26,6 @@ module Top(
 
 	always_comb begin
 		state_w = state_r;
-		if(i_start) begin
-			state_w = S_RUN;
-		end
 		if(state_r == S_IDLE) begin
 			current_output_w = current_output_r;
 			counter_w = 0;
@@ -57,6 +54,10 @@ module Top(
 				end
 				default: current_output_w = current_output_r; // do nothing
 			endcase
+		end
+		if(i_start) begin
+			state_w = S_RUN;
+			counter_w = 0;
 		end
 		o_random_out = current_output_w;
 		if(globalcounter_r == 30) begin

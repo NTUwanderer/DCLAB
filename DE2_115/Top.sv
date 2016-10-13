@@ -47,9 +47,9 @@ module Top(
 				80000000,
 				100000000,
 				120000000,
-				150000000: current_output_w = globalcounter_r;
+				150000000: current_output_w = current_output_r + globalcounter_r;
 				200000000: begin
-					current_output_w = globalcounter_r;
+					current_output_w = current_outuput_r + globalcounter_r;
 					state_w = S_IDLE;
 				end
 				default: current_output_w = current_output_r; // do nothing

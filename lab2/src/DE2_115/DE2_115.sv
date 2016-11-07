@@ -136,58 +136,11 @@ module DE2_115(
 	inout [6:0] EX_IO
 );
 	
-	logic[255:0] modcall1, modcall2, transret, mulret; 
-	logic strans, smul, ftrans, fmul;
-
 	DE2_115_qsys my_qsys(
 		.clk_clk(CLOCK_50),
 		.rst_reset_n(KEY[0]),
 		.uart_0_external_connection_rxd(UART_RXD),
 		.uart_0_external_connection_txd(UART_TXD)
-	);
-
-	Rsa256Wrapper wrapper0(
-
-	);
-
-	Rsa256Core core0(
-		.i_clk(CLOCK_50),
-		.i_rst(),
-	 	.i_start(),
-		.i_trans_done(ftrans),
-	 	.i_mul_done(fmul),
-		.i_a(),
-		.i_e(),
-		.i_n(),
-		.i_transreturn(transret),
-		.i_mulreturn(mulret),
-		.o_a_pow_e(),
-		.o_modcall1(modcall1),
-		.o_modcall2(modcall2),
-		.o_finished(),
-		.o_start_trans(strans),
-		.o_start_mul(smul)
-	);
-
-	montTrans trans0(
-		.i_clk(CLOCK_50),
-		.i_rst(),
-		.i_start(strans),
-		.i_a(modcall1),
-		.i_n(),
-		.o_a_mont(transret),
-		.o_finished(ftrans)
-	);
-
-	montMul mul0(
-		.i_clk(CLOCK_50),
-		.i_rst(),
-		.i_start(smul),
-		.i_a(modcall1),
-		.i_b(modcall2),
-		.i_n(),
-		.o_abmodn(mulret),
-		.o_finished(fmul)
 	);
 
 endmodule

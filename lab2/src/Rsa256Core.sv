@@ -59,7 +59,7 @@ module Rsa256Core(
 				if(count_r == 256) begin
 					o_finished = 1;
 					o_a_pow_e = result_r;
-					state_r = S_IDLE;
+					state_w = S_IDLE;
 				end else begin
 					if(i_e[count_r] == 1) begin
 						o_start_mul = 1;
@@ -99,13 +99,13 @@ module Rsa256Core(
 	end
 
 	always_ff @(posedge i_clk or negedge i_rst) begin
+		result_r <= result_w;
+		mont_const_r <= mont_const_w;
+		count_r <= count_w;
 		if(i_rst) begin
 			state_r <= S_IDLE;
 		end else begin
 			state_r <= state_w;
-			result_r <= result_w;
-			mont_const_r <= mont_const_w;
-			count_r <= count_w;
 		end
 	end
 endmodule

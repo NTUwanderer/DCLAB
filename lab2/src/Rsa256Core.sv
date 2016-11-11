@@ -24,6 +24,13 @@ module Rsa256Core(
 		S_WAIT_CALC1 = 4, S_WAIT_CALC2 = 5; 
 
 	always_comb begin
+		o_a_pow_e = result_r;
+		o_modcall1 = result_r;
+		o_modcall2 = mont_const_r;
+		o_finished = 0;
+		o_start_trans = 0;
+		o_start_mul = 0;
+
 		state_w = state_r;
 		case(state_r)
 			S_IDLE: begin

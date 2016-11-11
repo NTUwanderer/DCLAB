@@ -17,6 +17,9 @@ module montTrans(
 	localparam mont_const = 2**256;
 
 	always_comb
+		o_a_mont = result_r;
+		o_finished = 0;
+
 		state_w = state_r;
 		result_w = result_r;
 		if(state_r = S_IDLE) begin

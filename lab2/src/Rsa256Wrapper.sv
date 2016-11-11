@@ -80,7 +80,7 @@ module Rsa256Wrapper(
 		.o_a_pow_e(rsa_dec),
 		.o_modcall1(modcall1),
 		.o_modcall2(modcall2),
-		.o_finished(),
+		.o_finished(rsa_finished),
 		.o_start_trans(strans),
 		.o_start_mul(smul)
 	);

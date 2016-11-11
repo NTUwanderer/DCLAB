@@ -17,6 +17,9 @@ module montMul(
 	localparam S_IDLE = 0, S_RUN = 1;
 
 	always_comb
+		o_abmodn = result_r;
+		o_finished = 0;
+
 		state_w = state_r;
 		result_w = result_r;
 		if(state_r = S_IDLE) begin

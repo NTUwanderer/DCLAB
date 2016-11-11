@@ -5,8 +5,8 @@ module montMul(
 	input[255:0] i_a,
 	input[255:0] i_b,
 	input[255:0] i_n,
-	output[255:0] o_abmodn,
-	output o_finished
+	output reg [255:0] o_abmodn,
+	output reg o_finished
 );
 
 	logic[256:0] result_r, result_w;
@@ -35,7 +35,7 @@ module montMul(
 				o_abmodn = result_r;
 				state_w = S_IDLE;
 			end else begin
-				if(i_a[i] == 1) begin
+				if(i_a[count_r] == 1) begin
 					temp1 = result_r + i_b;
 				end
 				if(temp1[0] == 1) begin //odd

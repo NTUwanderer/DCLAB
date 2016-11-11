@@ -4,8 +4,8 @@ module montTrans(
 	input i_start,
 	input[255:0] i_a,
 	input[255:0] i_n,
-	output[255:0] o_a_mont,
-	output o_finished
+	output reg [255:0] o_a_mont,
+	output reg o_finished
 );
 
 	logic[256:0] result_r, result_w;
@@ -40,7 +40,7 @@ module montTrans(
 				end else begin
 					temp1 = result_r;
 				end
-				if(i_a[255-count]) begin
+				if(i_a[255-count_r) begin
 					temp2 = temp1 + (mont_const - i_n);
 					if(temp2 > i_n) begin
 						result_w = temp2 - i_n;

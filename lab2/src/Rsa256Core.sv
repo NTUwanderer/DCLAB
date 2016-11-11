@@ -9,12 +9,12 @@ module Rsa256Core(
 	input [255:0] i_n,
 	input [255:0] i_transreturn,
 	input [255:0] i_mulreturn,
-	output [255:0] o_a_pow_e,
-	output [255:0] o_modcall1,
-	output [255:0] o_modcall2,
-	output o_finished,
-	output o_start_trans,
-	output o_start_mul
+	output reg [255:0] o_a_pow_e,
+	output reg [255:0] o_modcall1,
+	output reg [255:0] o_modcall2,
+	output reg o_finished,
+	output reg o_start_trans,
+	output reg o_start_mul
 );
 	logic[2:0] state_r, state_w;
 	logic[255:0] result_r, result_w;
@@ -51,17 +51,17 @@ module Rsa256Core(
 			S_WAIT_PRECALC: begin
 				o_start_trans = 0;
 				if(i_trans_done) begin
-					mont_const_w = i_modreturn;
+					mont_const_w = i_transreturn;
 					state_w = S_CALC;
 				end
 			end
 			S_CALC: begin
-				if(count == 256) begin
+				if(count_r == 256) begin
 					o_finished = 1;
 					o_a_pow_e = result_r;
 					state_r = S_IDLE;
 				end else begin
-					if(i_e[count] == 1) begin
+					if(i_e[count_r] == 1) begin
 						o_start_mul = 1;
 						o_modcall1 = result_r;
 						o_modcall2 = mont_const_r;
@@ -76,7 +76,7 @@ module Rsa256Core(
 			end
 			S_WAIT_CALC1: begin
 				if(i_mul_done) begin
-					result_w = i_modreturn;
+					result_w = i_mulreturn;
 					o_start_mul = 1;
 					o_modcall1 = mont_const_r;
 					o_modcall2 = mont_const_r;
@@ -88,15 +88,17 @@ module Rsa256Core(
 			S_WAIT_CALC2: begin
 				o_start_mul = 0;
 				if(i_mul_done) begin
-					mont_const_w = i_modreturn;
+					mont_const_w = i_mulreturn;
 					state_w = S_CALC;
 				end
 				count_w = count_r + 1;
 			end
-			default: // do nothing
+			default: begin
+			end
+		endcase
 	end
 
-	always_ff @(posedge clk or negedge i_rst) begin
+	always_ff @(posedge i_clk or negedge i_rst) begin
 		if(i_rst) begin
 			state_r <= S_IDLE;
 		end else begin

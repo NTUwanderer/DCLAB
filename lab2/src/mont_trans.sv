@@ -16,13 +16,13 @@ module montTrans(
 	localparam S_IDLE = 0, S_RUN = 1;
 	localparam mont_const = 2**256;
 
-	always_comb
+	always_comb begin
 		o_a_mont = result_r;
 		o_finished = 0;
 
 		state_w = state_r;
 		result_w = result_r;
-		if(state_r = S_IDLE) begin
+		if(state_r == S_IDLE) begin
 			count_w = 0;
 			result_w = 0;
 			o_finished = 0;
@@ -53,7 +53,7 @@ module montTrans(
 		end
 	end
 
-	always_ff @(posedge i_clk or negedge i_rst)
+	always_ff @(posedge i_clk or negedge i_rst) begin
 		if(i_rst) begin
 			state_r <= S_IDLE;
 			result_r <= 0;

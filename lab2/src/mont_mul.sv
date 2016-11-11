@@ -12,17 +12,17 @@ module montMul(
 	logic[256:0] result_r, result_w;
 	logic[8:0] count_r, count_w;
 	logic state_r, state_w;
-	lgoic[256:0] temp1, temp2;
+	logic[256:0] temp1, temp2;
 
 	localparam S_IDLE = 0, S_RUN = 1;
 
-	always_comb
+	always_comb begin
 		o_abmodn = result_r;
 		o_finished = 0;
 
 		state_w = state_r;
 		result_w = result_r;
-		if(state_r = S_IDLE) begin
+		if(state_r == S_IDLE) begin
 			count_w = 0;
 			result_w = 0;
 			o_finished = 0;
@@ -54,7 +54,7 @@ module montMul(
 
 	end
 
-	always_ff @(posedge i_clk or negedge i_rst)
+	always_ff @(posedge i_clk or negedge i_rst) begin
 		if(i_rst) begin
 			state_r <= S_IDLE;
 			result_r <= 0;

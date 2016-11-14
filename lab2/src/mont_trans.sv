@@ -35,13 +35,13 @@ module montTrans(
 				o_a_mont = result_r;
 				state_w = S_IDLE;
 			end else begin 
-				if(result_r << 1 > i_n) begin
-					temp1 = result_r - i_n;
+				if(result_r << 1 > i_n) begin // a*2 mod n
+					temp1 = result_r << 1 - i_n;
 				end else begin
-					temp1 = result_r;
+					temp1 = result_r << 1;
 				end
-				if(i_a[255-count_r) begin
-					temp2 = temp1 + (mont_const - i_n);
+				if(i_a[255-count_r]) begin // a*2 + a_(255-i)*a mod n
+					temp2 = temp1 + i_a;
 					if(temp2 > i_n) begin
 						result_w = temp2 - i_n;
 					end else begin

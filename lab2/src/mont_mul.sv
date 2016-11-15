@@ -31,22 +31,21 @@ module montMul(
 			end
 		end else begin // S_RUN
 			if(count_r == 256) begin // terminate
+				if(result_r >= n) begin
+					o_abmodn = result_r - n;
+				end else begin
+					o_abmodn = result_r;
+				end
 				o_finished = 1;
-				o_abmodn = result_r;
 				state_w = S_IDLE;
 			end else begin
 				if(i_a[count_r] == 1) begin
 					temp1 = result_r + i_b;
 				end
 				if(temp1[0] == 1) begin //odd
-					temp2 = (temp1 + i_n) >> 1;
+					result_w = (temp1 + i_n) >> 1;
 				end else begin
-					temp2 = temp1 >> 1;
-				end
-				if(temp2 >= i_n >> 1) begin
-					result_w = temp2 - i_n;
-				end else begin
-					result_w = temp2;
+					result_w = temp1 >> 1;
 				end
 			end
 			count_w = count_r + 1;

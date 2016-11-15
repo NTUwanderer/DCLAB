@@ -227,14 +227,14 @@ module Rsa256Wrapper(
 				if (flag_r != RW_READ) begin
 					state_w = S_READ_E;
 					n_w = read_buffer_r;
-					flag_r = RW_READ;
+					flag_w = RW_READ;
 				end
 			end
 			S_READ_E: begin
 				if (flag_r != RW_READ) begin
 					state_w = S_READ_DATA;
 					e_w = read_buffer_r;
-					flag_r = RW_READ;
+					flag_w = RW_READ;
 				end
 			end
 			S_READ_DATA: begin
@@ -245,7 +245,7 @@ module Rsa256Wrapper(
 				end
 			end
 			S_CALC_BEGIN: begin
-				rsa_start_r;
+				rsa_start_w = 0;
 				state_w = S_CALC_WAIT;
 			end
 			S_CALC_WAIT: begin
@@ -257,7 +257,7 @@ module Rsa256Wrapper(
 			end
 			S_WRITE: begin
 				if (flag_r != RW_WRITE) begin
-					state_w = S_IDLE_DATA;
+					state_w = S_IDLE;
 					flag_w = RW_READ;
 				end
 			end

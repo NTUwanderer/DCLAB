@@ -40,7 +40,7 @@ module montTrans(
 				end else begin
 					temp1 = result_r;
 				end
-				if(i_a[255-count_r) begin
+				if(i_a[255-count_r]) begin
 					temp2 = temp1 + (mont_const - i_n);
 					if(temp2 > i_n) begin
 						result_w = temp2 - i_n;

@@ -46,7 +46,7 @@ module Rsa256Wrapper(
 	} RW_Flag;
 
 	logic[255:0] modcall1, modcall2, transret, mulret; 
-	logic strans, smul, ftrans, fmul;
+	logic strans, smul, ftrans, fmul, n;
 
 	logic rsa_start_r, rsa_start_w, rsa_finished;
 	logic[255:0] rsa_dec;
@@ -82,7 +82,8 @@ module Rsa256Wrapper(
 		.o_modcall2(modcall2),
 		.o_finished(rsa_finished),
 		.o_start_trans(strans),
-		.o_start_mul(smul)
+		.o_start_mul(smul),
+		.o_n(n)
 	);
 
 	montTrans trans0(
@@ -90,7 +91,7 @@ module Rsa256Wrapper(
 		.i_rst(avm_rst),
 		.i_start(strans),
 		.i_a(modcall1),
-		.i_n(n_r),
+		.i_n(n),
 		.o_a_mont(transret),
 		.o_finished(ftrans)
 	);
@@ -101,7 +102,7 @@ module Rsa256Wrapper(
 		.i_start(smul),
 		.i_a(modcall1),
 		.i_b(modcall2),
-		.i_n(n_r),
+		.i_n(n),
 		.o_abmodn(mulret),
 		.o_finished(fmul)
 	);

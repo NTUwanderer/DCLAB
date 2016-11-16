@@ -67,14 +67,14 @@ module Rsa256Core(
 			S_PRECALC: begin
 				o_start_trans = 1;
 				o_modcall1 = a_r;
-				$display("a_r %64x",a_r);
+				// $display("a_r %64x",a_r);
 				state_w = S_WAIT_PRECALC;
 			end
 			S_WAIT_PRECALC: begin
 				o_start_trans = 0;
 				if(i_trans_done) begin
 					mont_const_w = i_transreturn;
-					$display("transret %64x",i_transreturn);
+					// $display("transret %64x",i_transreturn);
 					state_w = S_CALC;
 				end
 			end
@@ -137,7 +137,7 @@ module Rsa256Core(
 			end
 
 			default: begin
-				$display("error");
+				// $display("error");
 			end
 		endcase
 		// if(result_r != result_w) begin

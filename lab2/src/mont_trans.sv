@@ -58,7 +58,7 @@ module montTrans(
 		if(i_rst) begin
 			state_r <= S_IDLE;
 			result_r <= 0;
-			count_r <= count_w;
+			count_r <= 0;
 		end else begin
 			result_r <= result_w;
 			state_r <= state_w;

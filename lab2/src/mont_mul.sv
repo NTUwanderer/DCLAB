@@ -31,6 +31,7 @@ module montMul(
 				state_w = S_RUN;
 			end
 		end else begin // S_RUN
+			//$display("mul %d ", count_r);
 			if(count_r == 256) begin // terminate
 				if(result_r >= i_n) begin
 					o_abmodn = result_r - i_n;

@@ -264,7 +264,7 @@ module Rsa256Wrapper(
 		endcase
 	end
 
-	always_ff @(posedge avm_clk or negedge avm_rst) begin
+	always_ff @(posedge avm_clk or posedge avm_rst) begin
 		if (avm_rst) begin
 			state_r <= S_IDLE;
 			io_state_r <= IO_IDLE;

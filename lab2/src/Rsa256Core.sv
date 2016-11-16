@@ -98,7 +98,7 @@ module Rsa256Core(
 		endcase
 	end
 
-	always_ff @(posedge i_clk or negedge i_rst) begin
+	always_ff @(posedge i_clk posedge i_rst) begin
 		result_r <= result_w;
 		mont_const_r <= mont_const_w;
 		count_r <= count_w;

@@ -31,8 +31,8 @@ module montMul(
 			end
 		end else begin // S_RUN
 			if(count_r == 256) begin // terminate
-				if(result_r >= n) begin
-					o_abmodn = result_r - n;
+				if(result_r >= i_n) begin
+					o_abmodn = result_r - i_n;
 				end else begin
 					o_abmodn = result_r;
 				end
@@ -53,7 +53,7 @@ module montMul(
 
 	end
 
-	always_ff @(posedge i_clk or negedge i_rst) begin
+	always_ff @(posedge i_clk or posedge i_rst) begin
 		if(i_rst) begin
 			state_r <= S_IDLE;
 			result_r <= 0;

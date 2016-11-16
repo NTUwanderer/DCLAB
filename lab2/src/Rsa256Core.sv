@@ -31,6 +31,9 @@ module Rsa256Core(
 		o_start_trans = 0;
 		o_start_mul = 0;
 
+		result_w = result_r;
+		mont_const_w = mont_const_r;
+		count_w = count_r;
 		state_w = state_r;
 		case(state_r)
 			S_IDLE: begin
@@ -98,7 +101,7 @@ module Rsa256Core(
 		endcase
 	end
 
-	always_ff @(posedge i_clk posedge i_rst) begin
+	always_ff @(posedge i_clk or posedge i_rst) begin
 		result_r <= result_w;
 		mont_const_r <= mont_const_w;
 		count_r <= count_w;

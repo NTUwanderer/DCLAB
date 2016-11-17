@@ -45,8 +45,8 @@ module Rsa256Wrapper(
 		RW_WRITE
 	} RW_Flag;
 
-	logic[255:0] modcall1, modcall2, transret, mulret; 
-	logic strans, smul, ftrans, fmul, n;
+	logic[255:0] modcall1, modcall2, transret, mulret, n2; 
+	logic strans, smul, ftrans, fmul;
 
 	logic rsa_start_r, rsa_start_w, rsa_finished;
 	logic[255:0] rsa_dec;
@@ -83,7 +83,7 @@ module Rsa256Wrapper(
 		.o_finished(rsa_finished),
 		.o_start_trans(strans),
 		.o_start_mul(smul),
-		.o_n(n)
+		.o_n(n2)
 	);
 
 	montTrans trans0(
@@ -91,7 +91,7 @@ module Rsa256Wrapper(
 		.i_rst(avm_rst),
 		.i_start(strans),
 		.i_a(modcall1),
-		.i_n(n),
+		.i_n(n2),
 		.o_a_mont(transret),
 		.o_finished(ftrans)
 	);
@@ -102,7 +102,7 @@ module Rsa256Wrapper(
 		.i_start(smul),
 		.i_a(modcall1),
 		.i_b(modcall2),
-		.i_n(n),
+		.i_n(n2),
 		.o_abmodn(mulret),
 		.o_finished(fmul)
 	);
@@ -134,6 +134,9 @@ module Rsa256Wrapper(
 	endtask
 
 	always_comb begin
+
+		// $display("read %d %d wait %d ios %d state_r %d flag_r %d t %0t",
+		// 	avm_read,avm_address,avm_waitrequest,io_state_r,state_r,flag_r,$time);
 		state_w = state_r;
 		io_state_w = io_state_r;
 		flag_w = flag_r;
@@ -163,7 +166,7 @@ module Rsa256Wrapper(
 				io_state_w = IO_TO_RECEIVE;
 			end
 			IO_TO_RECEIVE: begin
-				if (!avm_waitrequest) begin
+				if (avm_waitrequest == 0) begin
 					if (avm_readdata[RX_OK_BIT]) begin
 						StartRead(RX_BASE);
 						io_state_w = IO_RECEIVE_ONE_BYTE;
@@ -174,7 +177,7 @@ module Rsa256Wrapper(
 				end
 			end
 			IO_RECEIVE_ONE_BYTE: begin
-				if (!avm_waitrequest) begin
+				if (avm_waitrequest == 0) begin
 					DoNothing();
 					read_buffer_w = (read_buffer_r << 8) + avm_readdata[7:0];
 					bytes_counter_w = bytes_counter_r + 1;
@@ -192,7 +195,7 @@ module Rsa256Wrapper(
 				io_state_w = IO_TO_SEND;
 			end
 			IO_TO_SEND: begin
-				if (!avm_waitrequest) begin
+				if (avm_waitrequest == 0) begin
 					if (avm_readdata[TX_OK_BIT]) begin
 						StartRead(TX_BASE);
 						io_state_w = IO_SEND_ONE_BYTE;
@@ -203,7 +206,7 @@ module Rsa256Wrapper(
 				end
 			end
 			IO_SEND_ONE_BYTE: begin
-				if (!avm_waitrequest) begin
+				if (avm_waitrequest == 0) begin
 					DoNothing();
 					write_buffer_w = (write_buffer_r << 8);
 					bytes_counter_w = bytes_counter_r + 1;
@@ -263,9 +266,16 @@ module Rsa256Wrapper(
 				end
 			end
 		endcase
+		if(avm_readdata[7] == 1) begin
+			$display("avm_readdata 1 time %0t",$time);
+		end
+		if(state_w != state_r) begin
+			$display("read %d %d wait %d iow %d state_w %d flag_w %d t %0t",
+			avm_read,avm_address,avm_waitrequest,io_state_w,state_w,flag_w,$time);
+		end
 	end
 
-	always_ff @(posedge avm_clk or posedge avm_rst) begin
+	always_ff @(posedge avm_clk or negedge avm_rst) begin
 		if (avm_rst) begin
 			state_r <= S_IDLE;
 			io_state_r <= IO_IDLE;

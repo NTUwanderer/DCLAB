@@ -13,7 +13,7 @@ module montTrans(
 	logic state_r, state_w;
 	logic[256:0] temp1, temp2;
 	logic[256:0] mont_const;
-	logic[256:0] a_r, a_w;
+	logic[256:0] a_r, a_w, n_r, n_w;
 
 	localparam S_IDLE = 0, S_RUN = 1;
 	// localparam mont_const = 2**256;
@@ -33,6 +33,7 @@ module montTrans(
 		result_w = result_r;
 		count_w = count_r;
 		a_w = a_r;
+		n_w = n_r;
 		if(state_r == S_IDLE) begin
 			count_w = 0;
 			// o_finished = 1;
@@ -40,7 +41,9 @@ module montTrans(
 				// o_finished = 0;
 				result_w = 0;
 				a_w = i_a;
+				n_w = i_n;
 				state_w = S_RUN;
+				$display("i_n %64x", i_n);
 			end
 		end else begin // S_RUN
 			if(count_r == 256) begin // terminate
@@ -54,6 +57,7 @@ module montTrans(
 				// 	temp1 = result_r << 1;
 				// end
 				// $display("tp1 %64x %0t", temp1, $time);
+				// $display("nr2 %64x %0t", n_r, $time);
 				if(a_r[255-count_r]) begin // a*2 + a_(255-i)*2^256 mod n
 					// temp2 = temp1 + mont_const - i_n;
 					// $display("tp2 %64x %0t", temp2, $time);
@@ -71,17 +75,19 @@ module montTrans(
 		end
 	end
 
-	always_ff @(posedge i_clk or posedge i_rst) begin
+	always_ff @(posedge i_clk or negedge i_rst) begin
 		if(i_rst) begin
 			state_r <= S_IDLE;
 			result_r <= 0;
 			count_r <= 0;
-			a_r <= 0;
+			a_r <= a_w;
+			n_r <= n_w;
 		end else begin
 			result_r <= result_w;
 			state_r <= state_w;
 			count_r <= count_w;
 			a_r <= a_w;
+			n_r <= n_w;
 		end
 	end
 

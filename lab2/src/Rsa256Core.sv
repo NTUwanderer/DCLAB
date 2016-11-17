@@ -21,7 +21,7 @@ module Rsa256Core(
 	logic[255:0] result_r, result_w;
 	logic[255:0] mont_const_r, mont_const_w;
 	logic[8:0] count_r, count_w;
-	logic[255:0] a_r, a_w, e_r, e_w, n_r, n_w;
+	logic[256:0] a_r, a_w, e_r, e_w, n_r, n_w;
 	logic op_r, op_w;
 	localparam S_IDLE = 0, S_PRECALC = 1, S_CALC = 2, S_WAIT_PRECALC = 3, 
 		S_WAIT_CALC1 = 4, S_CALC2 = 5, S_WAIT_CALC2 = 6; 
@@ -31,11 +31,12 @@ module Rsa256Core(
 	assign o_n = n_r;
 	assign o_start_mul = op_r|(state_r==S_WAIT_CALC2)|(state_r==S_CALC);
 	always_comb begin
+		// $display("a %64x\ne %64x\nn %64x",a_r, e_r, n_r);
 		//$display("imuldone %d",i_mul_done);
 		// $display("state %d time %0t",state_r, $time);
 
 		// o_a_pow_e = result_r;
-		o_modcall1 = result_r;
+		o_modcall1 = a_r;
 		o_modcall2 = mont_const_r;
 		// o_finished = 0;
 		o_start_trans = 0;
@@ -50,6 +51,9 @@ module Rsa256Core(
 		n_w = n_r;
 		op_w = op_r;
 		// $display("state_w1 %d time %0t %d", state_w, $time, i_mul_done);
+		// if(o_finished) begin
+		// 	$display("res %64x", result_r);
+		// end
 		case(state_r)
 			S_IDLE: begin
 				result_w = 1;
@@ -62,19 +66,21 @@ module Rsa256Core(
 					e_w = i_e;
 					n_w = i_n;
 					state_w = S_PRECALC;
+					o_modcall1 = a_r;
 				end
 			end
 			S_PRECALC: begin
 				o_start_trans = 1;
 				o_modcall1 = a_r;
-				// $display("a_r %64x",a_r);
+				$display("a_r %64x",a_r);
+				$display("n_r %64x",n_r);
 				state_w = S_WAIT_PRECALC;
 			end
 			S_WAIT_PRECALC: begin
 				o_start_trans = 0;
 				if(i_trans_done) begin
 					mont_const_w = i_transreturn;
-					// $display("transret %64x",i_transreturn);
+					$display("transret %64x",i_transreturn);
 					state_w = S_CALC;
 				end
 			end
@@ -114,6 +120,7 @@ module Rsa256Core(
 				end
 			end
 			S_CALC2: begin
+				// $display("res %64x c %d",result_r, count_r);
 				op_w = 1;
 				// $display("send2 %64x %0t",mont_const_r, $time);
 				o_modcall1 = mont_const_r;
@@ -146,7 +153,7 @@ module Rsa256Core(
 		// $display("state_w2 %d time %0t %d", state_w, $time, i_mul_done);
 	end
 
-	always_ff @(posedge i_clk or posedge i_rst) begin
+	always_ff @(posedge i_clk or negedge i_rst) begin
 		// if(state_w == S_CALC) begin
 		// 	$display("123");
 		// end

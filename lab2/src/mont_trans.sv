@@ -43,7 +43,7 @@ module montTrans(
 				a_w = i_a;
 				n_w = i_n;
 				state_w = S_RUN;
-				$display("i_n %64x", i_n);
+				// $display("i_n %64x", i_n);
 			end
 		end else begin // S_RUN
 			if(count_r == 256) begin // terminate

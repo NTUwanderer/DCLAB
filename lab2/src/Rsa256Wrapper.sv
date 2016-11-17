@@ -266,13 +266,13 @@ module Rsa256Wrapper(
 				end
 			end
 		endcase
-		if(avm_readdata[7] == 1) begin
-			$display("avm_readdata 1 time %0t",$time);
-		end
-		if(state_w != state_r) begin
-			$display("read %d %d wait %d iow %d state_w %d flag_w %d t %0t",
-			avm_read,avm_address,avm_waitrequest,io_state_w,state_w,flag_w,$time);
-		end
+		// if(avm_readdata[7] == 1) begin
+		// 	$display("avm_readdata 1 time %0t",$time);
+		// end
+		// if(state_w != state_r) begin
+		// 	$display("read %d %d wait %d iow %d state_w %d flag_w %d t %0t",
+		// 	avm_read,avm_address,avm_waitrequest,io_state_w,state_w,flag_w,$time);
+		// end
 	end
 
 	always_ff @(posedge avm_clk or negedge avm_rst) begin

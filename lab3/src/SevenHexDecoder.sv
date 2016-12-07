@@ -1,6 +1,6 @@
 module SevenHexDecoder(
 	input [4:0] timer,
-	input [1:0] state,
+	input [2:0] state,
 	input [1:0] speedStat,
 	input [3:0] speed,
 	output logic [6:0] o_s0,
@@ -39,24 +39,96 @@ module SevenHexDecoder(
 	parameter U  = 7'b1000001;
 	parameter Y  = 7'b0011001;
 	parameter NE = 7'b0111111;
+	parameter DK = 7'b1111111;
+
 	always_comb begin
-		// case(i_hex)
-		// 	4'h0: begin o_seven_ten = D0; o_seven_one = D0; end
-		// 	4'h1: begin o_seven_ten = D0; o_seven_one = D1; end
-		// 	4'h2: begin o_seven_ten = D0; o_seven_one = D2; end
-		// 	4'h3: begin o_seven_ten = D0; o_seven_one = D3; end
-		// 	4'h4: begin o_seven_ten = D0; o_seven_one = D4; end
-		// 	4'h5: begin o_seven_ten = D0; o_seven_one = D5; end
-		// 	4'h6: begin o_seven_ten = D0; o_seven_one = D6; end
-		// 	4'h7: begin o_seven_ten = D0; o_seven_one = D7; end
-		// 	4'h8: begin o_seven_ten = D0; o_seven_one = D8; end
-		// 	4'h9: begin o_seven_ten = D0; o_seven_one = D9; end
-		// 	4'ha: begin o_seven_ten = D1; o_seven_one = D0; end
-		// 	4'hb: begin o_seven_ten = D1; o_seven_one = D1; end
-		// 	4'hc: begin o_seven_ten = D1; o_seven_one = D2; end
-		// 	4'hd: begin o_seven_ten = D1; o_seven_one = D3; end
-		// 	4'he: begin o_seven_ten = D1; o_seven_one = D4; end
-		// 	4'hf: begin o_seven_ten = D1; o_seven_one = D5; end
-		// endcase
+		o_s0 = DK;
+		o_s1 = DK;
+		o_s2 = DK;
+		o_s3 = DK;
+		o_s4 = DK;
+		o_s5 = DK;
+		o_s6 = DK;
+		o_s7 = DK;
+
+		case(timer)
+			0 : begin o_s1 = D0; o_s0 = D0; end
+			1 : begin o_s1 = D0; o_s0 = D1; end
+			2 : begin o_s1 = D0; o_s0 = D2; end
+			3 : begin o_s1 = D0; o_s0 = D3; end
+			4 : begin o_s1 = D0; o_s0 = D4; end
+			5 : begin o_s1 = D0; o_s0 = D5; end
+			6 : begin o_s1 = D0; o_s0 = D6; end
+			7 : begin o_s1 = D0; o_s0 = D7; end
+			8 : begin o_s1 = D0; o_s0 = D8; end
+			9 : begin o_s1 = D0; o_s0 = D9; end
+			10: begin o_s1 = D1; o_s0 = D0; end
+			11: begin o_s1 = D1; o_s0 = D1; end
+			12: begin o_s1 = D1; o_s0 = D2; end
+			13: begin o_s1 = D1; o_s0 = D3; end
+			14: begin o_s1 = D1; o_s0 = D4; end
+			15: begin o_s1 = D1; o_s0 = D5; end
+			16: begin o_s1 = D1; o_s0 = D6; end
+			17: begin o_s1 = D1; o_s0 = D7; end
+			18: begin o_s1 = D1; o_s0 = D8; end
+			19: begin o_s1 = D1; o_s0 = D9; end
+			20: begin o_s1 = D2; o_s0 = D0; end
+			21: begin o_s1 = D2; o_s0 = D1; end
+			22: begin o_s1 = D2; o_s0 = D2; end
+			23: begin o_s1 = D2; o_s0 = D3; end
+			24: begin o_s1 = D2; o_s0 = D4; end
+			25: begin o_s1 = D2; o_s0 = D5; end
+			26: begin o_s1 = D2; o_s0 = D6; end
+			27: begin o_s1 = D2; o_s0 = D7; end
+			28: begin o_s1 = D2; o_s0 = D8; end
+			29: begin o_s1 = D2; o_s0 = D9; end
+			30: begin o_s1 = D3; o_s0 = D0; end
+			31: begin o_s1 = D3; o_s0 = D1; end
+		endcase
+
+		case(state)
+			1: begin // IDLE
+				o_s7 = D1;
+				o_s6 = D0;
+				o_s5 = L;
+				o_s4 = E;
+				o_s1 = DK;
+				o_s0 = DK;
+				end
+			2: begin // PLAY
+				o_s7 = P;
+				if(speedStat == 0) begin
+					o_s6 = L;
+					o_s5 = A;
+					o_s4 = Y;
+				end else begin
+					case(speed)
+						2: begin o_s3 = D2; end
+						3: begin o_s3 = D3; end
+						4: begin o_s3 = D4; end
+						5: begin o_s3 = D5; end
+						6: begin o_s3 = D6; end
+						7: begin o_s3 = D7; end
+						8: begin o_s3 = D8; end
+						default begin end
+					endcase
+					o_s5 = S;
+					if(speedStat == 2) begin o_s4 = NE; end
+				end
+			3: begin // RECORD
+				o_s7 = R;
+				o_s6 = E;
+				o_s5 = C;
+				end
+			4: begin // PAUSE
+				o_s7 = P;
+				o_s6 = A;
+				o_s5 = U;
+				o_s4 = S;
+				o_s3 = E;
+				o_s1 = DK;
+				o_s0 = DK;
+				end
+		endcase
 	end
 endmodule

@@ -23,16 +23,16 @@ module top(
 	output [4:0] timer
 );
 
-enum { S_INIT, S_IDLE, S_PLAY, S_RECORD, S_PAUSE } state_r, state_w;
-enum { S_NORMAL, S_FAST, S_SLOW } speed_stat_r, speed_stat_w;
+	enum { S_INIT, S_IDLE, S_PLAY, S_RECORD, S_PAUSE } state_r, state_w;
+	enum { S_NORMAL, S_FAST, S_SLOW } speed_stat_r, speed_stat_w;
 
-logic startI_r, startI_w;
-logic startR_r, startR_w;
-logic startP_r, startP_w;
-logic doneI, doneP, doneR;
-logic[3:0] speed_r, speed_w;
-logic[19:0] pos_r, pos_w;
-logic[19:0] maxPos_r, maxPos_w;
+	logic startI_r, startI_w;
+	logic startR_r, startR_w;
+	logic startP_r, startP_w;
+	logic doneI, doneP, doneR;
+	logic[3:0] speed_r, speed_w;
+	logic[19:0] pos_r, pos_w;
+	logic[19:0] maxPos_r, maxPos_w;
 
 I2CSender i2(
 

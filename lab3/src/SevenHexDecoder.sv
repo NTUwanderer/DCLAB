@@ -1,7 +1,16 @@
 module SevenHexDecoder(
-	input [3:0] i_hex,
-	output logic [6:0] o_seven_ten,
-	output logic [6:0] o_seven_one
+	input [4:0] timer,
+	input [1:0] state,
+	input [1:0] speedStat,
+	input [3:0] speed,
+	output logic [6:0] o_s0,
+	output logic [6:0] o_s1,
+	output logic [6:0] o_s2,
+	output logic [6:0] o_s3,
+	output logic [6:0] o_s4,
+	output logic [6:0] o_s5,
+	output logic [6:0] o_s6,
+	output logic [6:0] o_s7
 );
 	/* The layout of seven segment display, 1: dark
 	 *    00
@@ -20,24 +29,34 @@ module SevenHexDecoder(
 	parameter D7 = 7'b1011000;
 	parameter D8 = 7'b0000000;
 	parameter D9 = 7'b0010000;
+	parameter A  = 7'b0001000;
+	parameter C  = 7'b1000110;
+	parameter E  = 7'b0000110;
+	parameter L  = 7'b1000111;
+	parameter P  = 7'b0001100;
+	parameter R  = 7'b1001110;
+	parameter S  = 7'b0010010;
+	parameter U  = 7'b1000001;
+	parameter Y  = 7'b0011001;
+	parameter NE = 7'b0111111;
 	always_comb begin
-		case(i_hex)
-			4'h0: begin o_seven_ten = D0; o_seven_one = D0; end
-			4'h1: begin o_seven_ten = D0; o_seven_one = D1; end
-			4'h2: begin o_seven_ten = D0; o_seven_one = D2; end
-			4'h3: begin o_seven_ten = D0; o_seven_one = D3; end
-			4'h4: begin o_seven_ten = D0; o_seven_one = D4; end
-			4'h5: begin o_seven_ten = D0; o_seven_one = D5; end
-			4'h6: begin o_seven_ten = D0; o_seven_one = D6; end
-			4'h7: begin o_seven_ten = D0; o_seven_one = D7; end
-			4'h8: begin o_seven_ten = D0; o_seven_one = D8; end
-			4'h9: begin o_seven_ten = D0; o_seven_one = D9; end
-			4'ha: begin o_seven_ten = D1; o_seven_one = D0; end
-			4'hb: begin o_seven_ten = D1; o_seven_one = D1; end
-			4'hc: begin o_seven_ten = D1; o_seven_one = D2; end
-			4'hd: begin o_seven_ten = D1; o_seven_one = D3; end
-			4'he: begin o_seven_ten = D1; o_seven_one = D4; end
-			4'hf: begin o_seven_ten = D1; o_seven_one = D5; end
-		endcase
+		// case(i_hex)
+		// 	4'h0: begin o_seven_ten = D0; o_seven_one = D0; end
+		// 	4'h1: begin o_seven_ten = D0; o_seven_one = D1; end
+		// 	4'h2: begin o_seven_ten = D0; o_seven_one = D2; end
+		// 	4'h3: begin o_seven_ten = D0; o_seven_one = D3; end
+		// 	4'h4: begin o_seven_ten = D0; o_seven_one = D4; end
+		// 	4'h5: begin o_seven_ten = D0; o_seven_one = D5; end
+		// 	4'h6: begin o_seven_ten = D0; o_seven_one = D6; end
+		// 	4'h7: begin o_seven_ten = D0; o_seven_one = D7; end
+		// 	4'h8: begin o_seven_ten = D0; o_seven_one = D8; end
+		// 	4'h9: begin o_seven_ten = D0; o_seven_one = D9; end
+		// 	4'ha: begin o_seven_ten = D1; o_seven_one = D0; end
+		// 	4'hb: begin o_seven_ten = D1; o_seven_one = D1; end
+		// 	4'hc: begin o_seven_ten = D1; o_seven_one = D2; end
+		// 	4'hd: begin o_seven_ten = D1; o_seven_one = D3; end
+		// 	4'he: begin o_seven_ten = D1; o_seven_one = D4; end
+		// 	4'hf: begin o_seven_ten = D1; o_seven_one = D5; end
+		// endcase
 	end
 endmodule

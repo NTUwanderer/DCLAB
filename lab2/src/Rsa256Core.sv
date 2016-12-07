@@ -153,7 +153,7 @@ module Rsa256Core(
 		// $display("state_w2 %d time %0t %d", state_w, $time, i_mul_done);
 	end
 
-	always_ff @(posedge i_clk or negedge i_rst) begin
+	always_ff @(posedge i_clk or posedge i_rst) begin
 		// if(state_w == S_CALC) begin
 		// 	$display("123");
 		// end

@@ -20,7 +20,7 @@ module Rsa256Wrapper(
 	// localparam S_SEND_DATA = 3;
 
 	typedef enum {
-		S_IDLE,
+		S_BEGIN,
 		S_READ_N,
 		S_READ_E,
 		S_READ_DATA,
@@ -69,9 +69,9 @@ module Rsa256Wrapper(
 	Rsa256Core core0(
 		.i_clk(avm_clk),
 		.i_rst(avm_rst),
-	 	.i_start(rsa_start_r),
+		.i_start(rsa_start_r),
 		.i_trans_done(ftrans),
-	 	.i_mul_done(fmul),
+		.i_mul_done(fmul),
 		.i_a(enc_r),
 		.i_e(e_r),
 		.i_n(n_r),
@@ -134,22 +134,19 @@ module Rsa256Wrapper(
 	endtask
 
 	always_comb begin
-
-		// $display("read %d %d wait %d ios %d state_r %d flag_r %d t %0t",
-		// 	avm_read,avm_address,avm_waitrequest,io_state_r,state_r,flag_r,$time);
 		state_w = state_r;
-		io_state_w = io_state_r;
-		flag_w = flag_r;
 		rsa_start_w = rsa_start_r;
 		enc_w = enc_r;
-		e_w = e_r;
 		n_w = n_r;
-		avm_address_w = avm_address_r;
+		e_w = e_r;
 		avm_read_w = avm_read_r;
 		avm_write_w = avm_write_r;
+		avm_address_w = avm_address_r;
+		io_state_w = io_state_r;
 		bytes_counter_w = bytes_counter_r;
 		read_buffer_w = read_buffer_r;
 		write_buffer_w = write_buffer_r;
+		flag_w = flag_r;
 
 		case (io_state_r)
 			IO_IDLE: begin
@@ -196,8 +193,8 @@ module Rsa256Wrapper(
 			end
 			IO_TO_SEND: begin
 				if (avm_waitrequest == 0) begin
-					if (avm_readdata[TX_OK_BIT]) begin
-						StartRead(TX_BASE);
+					if(avm_readdata[TX_OK_BIT]) begin
+						StartWrite(TX_BASE);
 						io_state_w = IO_SEND_ONE_BYTE;
 					end else begin
 						DoNothing();
@@ -223,7 +220,7 @@ module Rsa256Wrapper(
 		endcase
 
 		case (state_r)
-			S_IDLE: begin
+			S_BEGIN: begin
 				state_w = S_READ_N;
 				flag_w = RW_READ;
 			end
@@ -261,49 +258,42 @@ module Rsa256Wrapper(
 			end
 			S_WRITE: begin
 				if (flag_r != RW_WRITE) begin
-					state_w = S_IDLE;
+					state_w = S_BEGIN;
 					flag_w = RW_READ;
 				end
 			end
 		endcase
-		// if(avm_readdata[7] == 1) begin
-		// 	$display("avm_readdata 1 time %0t",$time);
-		// end
-		// if(state_w != state_r) begin
-		// 	$display("read %d %d wait %d iow %d state_w %d flag_w %d t %0t",
-		// 	avm_read,avm_address,avm_waitrequest,io_state_w,state_w,flag_w,$time);
-		// end
 	end
 
 	always_ff @(posedge avm_clk or negedge avm_rst) begin
 		if (avm_rst) begin
-			state_r <= S_IDLE;
+			n_r <= 0;
+			e_r <= 0;
+			state_r <= S_BEGIN;
 			io_state_r <= IO_IDLE;
 			flag_r <= RW_IDLE;
-			rsa_start_r <= 0;
 			enc_r <= 0;
-			e_r <= 0;
-			n_r <= 0;
 			avm_address_r <= STATUS_BASE;
 			avm_read_r <= 1;
 			avm_write_r <= 0;
-			bytes_counter_r <= 0;
-			read_buffer_r <= '0;
+			rsa_start_r <= 0;
 			write_buffer_r <= '0;
+			read_buffer_r <= '0;
+			bytes_counter_r <= 0;
 		end else begin
-			state_r <= state_w;
-			io_state_r <= io_state_w;
-			flag_r <= flag_w;
-			rsa_start_r <= rsa_start_w;
-			enc_r <= enc_w;
-			e_r <= e_w;
 			n_r <= n_w;
+			e_r <= e_w;
+			enc_r <= enc_w;
 			avm_address_r <= avm_address_w;
 			avm_read_r <= avm_read_w;
 			avm_write_r <= avm_write_w;
+			rsa_start_r <= rsa_start_w;
+			io_state_r <= io_state_w;
 			bytes_counter_r <= bytes_counter_w;
-			read_buffer_r <= read_buffer_w;
 			write_buffer_r <= write_buffer_w;
+			read_buffer_r <= read_buffer_w;
+			flag_r <= flag_w;
+			state_r <= state_w;
 		end
 	end
 endmodule

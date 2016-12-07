@@ -75,7 +75,7 @@ module montTrans(
 		end
 	end
 
-	always_ff @(posedge i_clk or negedge i_rst) begin
+	always_ff @(posedge i_clk or posedge i_rst) begin
 		if(i_rst) begin
 			state_r <= S_IDLE;
 			result_r <= 0;

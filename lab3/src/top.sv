@@ -118,7 +118,10 @@ always_comb begin
 			startP_w = 0;
 			if(i_start) begin
 				state_w = S_PLAY;
-			end;
+				startP_w = 1;
+			end else if(i_stop) begin
+				state_w = S_IDLE;
+			end
 		end
 	endcase
 end

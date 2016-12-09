@@ -1,13 +1,15 @@
 module top(
-	input KEY[3:0], //after debounce
-	input SW00, //reset?
-	input SW01, // 0:record, 1:play
-	input SW02,
+	input i_start, //KEY[3], after debounce
+	input i_stop,
+	input i_up,
+	input i_down, //KEY[0]
+	// input SW02, // 0:normal, 1:change speed ?
 	input ADCLRCK,
 	input ADCDAT,
 	input DACLRCK,
 	input i_clk, //BCLK
 	input i_rst, //SW00?
+	input i_switch, // 0:record, 1:play
 
 	inout I2C_SDAT,
 	inout [15:0] SRAM_DQ,
@@ -34,19 +36,22 @@ module top(
 	logic[19:0] pos_r, pos_w;
 	logic[19:0] maxPos_r, maxPos_w;
 
-	//key0 start/pause, key1 stop, key2 speedup, key3 speeddown;
+	assign timer = pos_r[18:15];
+	assign SRAM_CE_N = 0;
+	assign SRAM_UB_N = 0;
+	assign SRAM_LB_N = 0;
 
-I2CSender i2(
+	I2CSender i2(
 
-);
+	);
 
-Record adc(
+	Record adc(
 
-);
+	);
 
-Play dac(
+	Play dac(
 
-);
+	);
 
 always_comb begin
 	state_w = state_r;
@@ -65,6 +70,7 @@ always_comb begin
 
 			if(doneI) begin
 				state_w = S_IDLE;
+				startI_w = 0;
 			end
 		end
 
@@ -72,7 +78,8 @@ always_comb begin
 			startI_w = 0;
 			startR_w = 0;
 			startP_w = 0;
-			if(key[0]) begin
+			pos_w = 0;
+			if(i_start) begin
 				if(SW01) begin
 					state_w = S_PLAY;
 				end else begin
@@ -83,17 +90,35 @@ always_comb begin
 
 		S_RECORD: begin
 			startR_w = 1;
+			pos_w = SRAM_ADDR;
+			maxPos_w = SRAM_ADDR;
+			// call adc
 
-
+			if(i_stop || doneR) begin
+				state_w = S_IDLE;
+				startR_w = 0;
+			end
 		end
 
 		S_PLAY: begin
 			startP_w = 1;
+			pos_w = SRAM_ADDR;
+			// call dac
+
+			if(i_start) begin
+				state_w = S_PAUSE;
+				startP_w = 0;
+			end else if(i_stop || doneP) begin
+				state_w = S_IDLE;
+				startP_w = 0;
+			end
 		end
 
 		S_PAUSE: begin
-			startR_w = 0;
 			startP_w = 0;
+			if(i_start) begin
+				state_w = S_PLAY;
+			end;
 		end
 	endcase
 end

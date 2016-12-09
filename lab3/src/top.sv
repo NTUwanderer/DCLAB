@@ -34,42 +34,48 @@ module top(
 	logic[19:0] pos_r, pos_w;
 	logic[19:0] maxPos_r, maxPos_w;
 
-I2CSender i2(
+	I2CSender i2(
+		.i_start(startI_r),
+		.i_dat(),
+		.i_clk(i_clk),
+		.i_rst(SW00),
+		.o_finished(),
+		.o_sclk(I2C_SCLK),
+		.o_sdat(I2C_SDAT)
+	);
 
-);
+	Record adc(
 
-Record adc(
+	);
 
-);
+	Play dac(
 
-Play dac(
+	);
 
-);
+	always_comb begin
 
-always_comb begin
-
-end
-
-always_ff @(posedge i_clk or posedge i_rst) begin
-	if(i_rst) begin
-		state_r <= S_INIT;
-		speed_stat_r <= S_NORMAL;
-		startI_r <= 0;
-		startP_r <= 0;
-		startR_r <= 0;
-		speed_r <= 1;
-		pos_r <= 0;
-		maxPos_r <= 0;
-	end else begin
-		state_r <= state_w;
-		speed_stat_r <= speed_stat_w;
-		startI_r <= startI_w;
-		startP_r <= startP_w;
-		startR_r <= startP_r;
-		speed_r <= speed_w;
-		pos_r <= pos_w;
-		maxPos_r <= maxPos_w;
 	end
-end
+
+	always_ff @(posedge i_clk or posedge i_rst) begin
+		if(i_rst) begin
+			state_r <= S_INIT;
+			speed_stat_r <= S_NORMAL;
+			startI_r <= 0;
+			startP_r <= 0;
+			startR_r <= 0;
+			speed_r <= 1;
+			pos_r <= 0;
+			maxPos_r <= 0;
+		end else begin
+			state_r <= state_w;
+			speed_stat_r <= speed_stat_w;
+			startI_r <= startI_w;
+			startP_r <= startP_w;
+			startR_r <= startP_r;
+			speed_r <= speed_w;
+			pos_r <= pos_w;
+			maxPos_r <= maxPos_w;
+		end
+	end
 
 endmodule

@@ -110,7 +110,7 @@ module SevenHexDecoder(
 						6: begin o_s3 = D6; end
 						7: begin o_s3 = D7; end
 						8: begin o_s3 = D8; end
-						default begin end
+						default: begin end
 					endcase
 					o_s5 = S;
 					if(speedStat == 2) begin o_s4 = NE; end
@@ -129,6 +129,7 @@ module SevenHexDecoder(
 				o_s1 = DK;
 				o_s0 = DK;
 				end
+			default: begin end;
 		endcase
 	end
 endmodule

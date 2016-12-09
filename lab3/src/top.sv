@@ -1,7 +1,7 @@
 module top(
 	input KEY[3:0], //after debounce
 	input SW00, //reset?
-	input SW01,
+	input SW01, // 0:record, 1:play
 	input SW02,
 	input ADCLRCK,
 	input ADCDAT,
@@ -34,6 +34,8 @@ module top(
 	logic[19:0] pos_r, pos_w;
 	logic[19:0] maxPos_r, maxPos_w;
 
+	//key0 start/pause, key1 stop, key2 speedup, key3 speeddown;
+
 	I2CSender i2(
 		.i_start(startI_r),
 		.i_dat(),
@@ -53,7 +55,53 @@ module top(
 	);
 
 	always_comb begin
+		state_w = state_r;
+		speed_stat_w = speed_stat_w;
+		startI_w = startI_r;
+		startR_w = startR_r;
+		startP_w = startP_r;
+		speed_w = speed_r;
+		pos_w = pos_r;
+		maxPos_w = maxPos_r;
 
+		case(state_r)
+			S_INIT: begin 
+				startI_w = 1;
+				//call I2CSender
+
+				if(doneI) begin
+					state_w = S_IDLE;
+				end
+			end
+
+			S_IDLE: begin
+				startI_w = 0;
+				startR_w = 0;
+				startP_w = 0;
+				if(key[0]) begin
+					if(SW01) begin
+						state_w = S_PLAY;
+					end else begin
+						state_w = S_RECORD;
+					end
+				end
+			end
+
+			S_RECORD: begin
+				startR_w = 1;
+
+
+			end
+
+			S_PLAY: begin
+				startP_w = 1;
+			end
+
+			S_PAUSE: begin
+				startR_w = 0;
+				startP_w = 0;
+			end
+		endcase
 	end
 
 	always_ff @(posedge i_clk or posedge i_rst) begin

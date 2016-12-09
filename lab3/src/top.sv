@@ -112,6 +112,26 @@ always_comb begin
 				state_w = S_IDLE;
 				startP_w = 0;
 			end
+
+			if(i_up) begin
+				if(speed_stat_r == S_NORMAL) begin
+					speed_stat_w = S_FAST;
+					speed_w = 2;
+				end else if(speed_r <= 8) begin
+					speed_w = speed_r + 1;
+				end else if(S_SLOW && speed_r == 2) begin
+					speed_stat_w = S_NORMAL;
+				end
+			end else if(i_down) begin
+				if(speed_stat_r == S_NORMAL) begin
+					speed_stat_w = S_SLOW;
+					speed_w = 2;
+				end else if(speed_r <= 8) begin
+					speed_w = speed_r + 1;
+				end else if(S_FAST && speed_r == 2) begin
+					speed_stat_w = S_NORMAL;
+				end
+			end
 		end
 
 		S_PAUSE: begin

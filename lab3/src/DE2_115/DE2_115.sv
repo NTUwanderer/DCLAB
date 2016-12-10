@@ -135,10 +135,74 @@ module DE2_115(
 	output [16:0] HSMC_TX_D_P,
 	inout [6:0] EX_IO
 );
-	rsa_qsys my_qsys(
-		.clk_clk(CLOCK_50),
-		.rst_reset_n(KEY[0]),
-		.uart_0_external_connection_rxd(UART_RXD),
-		.uart_0_external_connection_txd(UART_TXD)
+	
+	logic[3:0] k_deb;
+	logic[4:0] timer0;
+	logic[2:0] state0;
+	logic[1:0] speedStat0;
+	logic[3:0] speed0;
+
+	Debounce k0(
+		.i_in(KEY[0]),
+		.i_clk(AUD_BCLK),
+		.o_pos(k_deb[0])
 	);
+	Debounce k1(
+		.i_in(KEY[1]),
+		.i_clk(AUD_BCLK),
+		.o_pos(k_deb[1])
+	);
+	Debounce k2(
+		.i_in(KEY[2]),
+		.i_clk(AUD_BCLK),
+		.o_pos(k_deb[2])
+	);
+	Debounce k3(
+		.i_in(KEY[3]),
+		.i_clk(AUD_BCLK),
+		.o_pos(k_deb[3])
+	);
+
+	SevenHexDecoder sevenDec(
+		.timer(timer0),
+		.state(state0),
+		.speedStat(speedStat0),
+		.speed(speed0),
+		.o_s0(HEX0),
+		.o_s1(HEX1),
+		.o_s2(HEX2),
+		.o_s3(HEX3),
+		.o_s4(HEX4),
+		.o_s5(HEX5),
+		.o_s6(HEX6),
+		.o_s7(HEX7)
+	);
+
+	top recorder(
+		.i_start(k_deb[3]),
+		.i_stop(k_deb[2]),
+		.i_up(k_deb[1]),
+		.i_down(k_deb[0]),
+		.ADCLRCK(AUD_ADCLRCK),
+		.ADCDAT(AUD_ADCDAT),
+		.DACLRCK(AUD_DACLRCK),
+		.i_clk(AUD_BCLK),
+		.i_rst(SW[0]),
+		.i_switch(SW[1]),
+		.I2C_SDAT(I2C_SDAT),
+		.SRAM_DQ(SRAM_DQ),
+		.I2C_SCLK(I2C_SCLK),
+		.SRAM_ADDR(SRAM_ADDR),
+		.SRAM_CE_N(SRAM_CE_N),
+		.SRAM_OE_N(SRAM_OE_N),
+		.SRAM_WE_N(SRAM_WE_N),
+		.SRAM_UB_N(SRAM_UB_N),
+		.SRAM_LB_N(SRAM_LB_N),
+		.DACDAT(AUD_DACDAT),
+		.o_timer(timer0),
+		.o_state(state0),
+		.o_speedStat(speedStat0),
+		.o_speed(speed0)
+	);
+
 endmodule

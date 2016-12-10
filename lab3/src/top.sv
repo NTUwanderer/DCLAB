@@ -22,7 +22,10 @@ module top(
 	output SRAM_UB_N,
 	output SRAM_LB_N,
 	output DACDAT,
-	output [4:0] timer
+	output [4:0] o_timer,
+	output [2:0] o_state,
+	output [1:0] o_speedStat,
+	output [3:0] o_speed
 );
 
 	enum { S_INIT, S_IDLE, S_PLAY, S_RECORD, S_PAUSE } state_r, state_w;
@@ -36,7 +39,10 @@ module top(
 	logic[19:0] pos_r, pos_w;
 	logic[19:0] maxPos_r, maxPos_w;
 
-	assign timer = pos_r[18:15];
+	assign o_timer = pos_r[18:15]; //32k ~ 2^15
+	assign o_state = state_r;
+	assign o_speedStat = speed_stat_r;
+	assign o_speed = speed_r;
 	assign SRAM_CE_N = 0;
 	assign SRAM_UB_N = 0;
 	assign SRAM_LB_N = 0;

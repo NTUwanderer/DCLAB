@@ -47,8 +47,13 @@ module top(
 	assign SRAM_UB_N = 0;
 	assign SRAM_LB_N = 0;
 
-	I2CSender i2(
-
+	I2CManager i2cM(
+		.i_input(startI_r),
+		.i_clk(i_clk),
+		.i_rst(i_rst),
+		.o_finished(doneI),
+		.o_sclk(I2C_SCLK),
+		.o_sdat(I2C_SDAT)
 	);
 
 	Record adc(
@@ -72,7 +77,7 @@ always_comb begin
 	case(state_r)
 		S_INIT: begin 
 			startI_w = 1;
-			//call I2CSender
+			//call I2CManager
 
 			if(doneI) begin
 				state_w = S_IDLE;

@@ -22,6 +22,7 @@ module I2CManager (
 
     typedef enum {
         S_IDLE,
+        S_BUFF,
         S_WAIT
     } State;
 
@@ -30,6 +31,7 @@ module I2CManager (
     logic [23:0] data_r, data_w;
     logic [3:0] counter_r, counter_w;
     logic startS_r, startS_w;
+    logic [2:0] buff_count_r, buff_count_w;
     logic s_finished;
     logic o_finished_r, o_finished_w;
 
@@ -50,15 +52,23 @@ module I2CManager (
         data_w = data_r;
         counter_w = counter_r;
         startS_w = startS_r;
+        buff_count_w = buff_count_r;
 
         o_finished_w = o_finished_r;
 
         if (i_start) begin
             case (state_r)
                 S_IDLE: begin
-                    state_w = S_WAIT;
+                    state_w = S_BUFF;
                     startS_w = 1;
                     o_finished_w = 0;
+                end
+
+                S_BUFF: begin
+                    if (buff_count_r == 7) begin
+                        state_w = S_WAIT;
+                        buff_count_w = 0;
+                    end
                 end
 
                 S_WAIT begin
@@ -90,19 +100,21 @@ module I2CManager (
 
     always_ff @(posedge i_clk, i_rst) begin
         if (!i_rst) begin
-            state_r <= S_IDLE;
-            data_r <= resetBits;
-            counter_r <= 0;
-            startS_r <= 0;
+            state_r         <= S_IDLE;
+            data_r          <= resetBits;
+            counter_r       <= 0;
+            startS_r        <= 0;
+            buff_count_r    <= 0;
 
-            o_finished_r <= 1;
+            o_finished_r    <= 1;
         end else begin
-            state_r <= state_w;
-            data_r <= data_w;
-            counter_r <= counter_w;
-            startS_r <= startS_w;
+            state_r         <= state_w;
+            data_r          <= data_w;
+            counter_r       <= counter_w;
+            startS_r        <= startS_w;
+            buff_count_r    <= buff_count_w;
 
-            o_finished_r <= o_finished_w;
+            o_finished_r    <= o_finished_w;
         end
     end
 

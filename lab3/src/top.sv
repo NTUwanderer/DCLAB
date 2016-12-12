@@ -9,7 +9,8 @@ module top(
 	input DACLRCK,
 	input i_clk, //BCLK
 	input i_rst, //SW00?
-	input i_switch, // 0:record, 1:play
+	input i_switch, // 0:record, 1:play, SW01
+	input i_intpol, // 0 or 1 order, SW02
 
 	inout I2C_SDAT,
 	inout [15:0] SRAM_DQ,

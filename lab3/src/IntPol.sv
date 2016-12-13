@@ -1,4 +1,4 @@
-module FirstIntPol (
+module IntPol (
     input i_bclk,
     input i_next,
     input i_reset,
@@ -63,7 +63,7 @@ module FirstIntPol (
                     if (greaterR_w)     temp[15:0]  = i_dat[15:0]  - i_prev_dat[15:0];
                     else                temp[15:0]  = i_prev_dat[15:0]  - i_dat[15:0];
 
-                    case (i_speed):
+                    case (i_speed)
                         0: begin
                             delta_w = temp;
                             state_w = S_INIT;
@@ -98,11 +98,11 @@ module FirstIntPol (
                         end
                     endcase
                 end else begin
-                    delta = 31'b0;
+                    delta_w = 31'b0;
                 end
             end
 
-            case S_CALC: begin
+            S_CALC: begin
                 if (i_next) begin
                     counter_w = counter_r + 1;
 
@@ -119,7 +119,7 @@ module FirstIntPol (
                 end
             end
 
-            case S_IDLE: begin
+            S_IDLE: begin
                 // intpol_dat_w    = 0; remain last output
                 speed_w         = 0;
                 counter_w       = 0;

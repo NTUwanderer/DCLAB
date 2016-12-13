@@ -53,7 +53,7 @@ module I2cSender (
 
                     clk_count_w = 0;
 
-                    data_w = resetBits;
+                    data_w = i_data;
                 end
             end
 
@@ -62,6 +62,7 @@ module I2cSender (
                 if (o_sclk_r == 0) begin
                     state_w = S_DATAPAS;
                     data_w = (data_r << 1);
+                    o_sdat_w = data_r[23];
                 end
             end
 

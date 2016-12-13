@@ -60,7 +60,14 @@ module top(
 	);
 
 	Record adc(
-
+		.i_record(startR_r),
+		.i_ADCLRCK(ADCLRCK),
+		.i_ADCDAT(ADCDAT),
+		.i_BCLK(i_clk),
+		.o_SRAM_WE(SRAM_WE_N),
+		.o_SRAM_DATA(SRAM_DQ),
+		.o_done(doneR),
+		.o_sram_addr(SRAM_ADDR)
 	);
 
 	Play dac(

@@ -2,6 +2,7 @@ module FirstIntPol (
     input i_bclk,
     input i_next,
     input i_reset,
+    input i_first,
     input [2:0] i_speed,
     input [31:0] i_prev_dat,
     input [31:0] i_dat,
@@ -9,7 +10,8 @@ module FirstIntPol (
 );
     typedef enum {
         S_INIT,
-        S_CALC
+        S_CALC,
+        S_IDLE
     } State;
     State state_r, state_w;
     logic [31:0] intpol_dat_r, intpol_dat_w;
@@ -43,13 +45,15 @@ module FirstIntPol (
         temp = 0;
         delta_w = delta_r;
 
-        if (i_next) begin
-            case (state_r)
-                S_INIT: begin
-                    speed_w = i_speed;
-                    state_w = S_CALC;
-                    counter_w = 1;
+        case (state_r)
+            S_INIT: begin
+                speed_w = i_speed;
+                state_w = S_CALC;
+                counter_w = 0;
 
+                intpol_dat_w = i_prev_dat;
+
+                if (i_first) begin
                     Compare(i_prev_dat[31:16], i_dat[31:16], greaterL_w);
                     Compare(i_prev_dat[15:0], i_dat[15:0], greaterR_w);
                     
@@ -93,15 +97,13 @@ module FirstIntPol (
                             delta_w[15:0]  = temp[15:0]  / 8;
                         end
                     endcase
-
-                    if (greaterL_w == 1'b1) intpol_dat_w[31:16] = i_prev_dat[31:16] + delta_w[31:16];
-                    else                    intpol_dat_w[31:16] = i_prev_dat[31:16] - delta_w[31:16];
-
-                    if (greaterR_w == 1'b1) intpol_dat_w[15:0]  = i_prev_dat[15:0]  + delta_w[15:0];
-                    else                    intpol_dat_w[15:0]  = i_prev_dat[15:0]  - delta_w[15:0];
+                end else begin
+                    delta = 31'b0;
                 end
+            end
 
-                case S_CALC: begin
+            case S_CALC: begin
+                if (i_next) begin
                     counter_w = counter_r + 1;
 
                     if (greaterL_r == 1'b1) intpol_dat_w[31:16] = intpol_dat_r[31:16] + delta_r[31:16];
@@ -111,15 +113,24 @@ module FirstIntPol (
                     else                    intpol_dat_w[15:0]  = intpol_dat_r[15:0]  - delta_r[15:0];
 
                     if (counter_r == (speed_r - 1)) begin
-                        state_w = S_INIT;
+                        state_w = S_IDLE;
                         counter_w = 0;
                     end
                 end
-            endcase
-        end
+            end
+
+            case S_IDLE: begin
+                // intpol_dat_w    = 0; remain last output
+                speed_w         = 0;
+                counter_w       = 0;
+                greaterL_w      = 0;
+                greaterR_w      = 0;
+                delta_w         = 0;
+            end
+        endcase
     end
 
-    always_ff @(posedge i_bclk) begin
+    always_ff @(posedge i_bclk, posedge i_reset) begin
         if (i_reset) begin
             state_r         <= S_INIT;
             intpol_dat_r    <= 0;

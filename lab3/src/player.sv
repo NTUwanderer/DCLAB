@@ -62,7 +62,7 @@ module Player(
 		done_w = done_r;
 		dacdat_w = dacdat_r;
 		pre_fetched_w = pre_fetched_r;
-		is_inter_w = is_inter_w;
+		is_inter_w = is_inter_r;
 
 		case (state_r)
 			S_IDLE: begin 

@@ -98,8 +98,8 @@ module I2CManager (
         end
     end
 
-    always_ff @(posedge i_clk, i_rst) begin
-        if (!i_rst) begin
+    always_ff @(posedge i_clk or posedge i_rst) begin
+        if (i_rst) begin
             state_r         <= S_IDLE;
             data_r          <= resetBits;
             counter_r       <= 0;

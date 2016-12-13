@@ -141,6 +141,14 @@ module DE2_115(
 	logic[2:0] state0;
 	logic[1:0] speedStat0;
 	logic[3:0] speed0;
+	logic clk_100k;
+
+	altpll altpll0(
+		.altpll_0_c0_clk(AUD_XCK), // 12MHz
+		.altpll_0_c1_clk(clk_100k), //100kHz
+		.clk_clk(CLOCK_50),
+		.reset_reset_n()
+	);
 
 	Debounce k0(
 		.i_in(KEY[0]),
@@ -178,7 +186,7 @@ module DE2_115(
 		.o_s7(HEX7)
 	);
 
-	top recorder(
+	top top0(
 		.i_start(k_deb[3]),
 		.i_stop(k_deb[2]),
 		.i_up(k_deb[1]),
@@ -187,6 +195,7 @@ module DE2_115(
 		.ADCDAT(AUD_ADCDAT),
 		.DACLRCK(AUD_DACLRCK),
 		.i_clk(AUD_BCLK),
+		.i_clk2(clk_100k),
 		.i_rst(SW[0]),
 		.i_switch(SW[1]),
 		.i_intpol(SW[2]),

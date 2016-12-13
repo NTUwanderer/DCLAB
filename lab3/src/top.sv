@@ -8,6 +8,7 @@ module top(
 	input ADCDAT,
 	input DACLRCK,
 	input i_clk, //BCLK
+	input i_clk2, //100kHz for i2c
 	input i_rst, //SW00?
 	input i_switch, // 0:record, 1:play, SW01
 	input i_intpol, // 0 or 1 order, SW02
@@ -90,7 +91,7 @@ module top(
 
 always_comb begin
 	state_w = state_r;
-	speed_stat_w = speed_stat_w;
+	speed_stat_w = speed_stat_r;
 	startI_w = startI_r;
 	startR_w = startR_r;
 	startP_w = startP_r;

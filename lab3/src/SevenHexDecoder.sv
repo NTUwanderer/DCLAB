@@ -94,7 +94,7 @@ module SevenHexDecoder(
 				o_s4 = E;
 				o_s1 = DK;
 				o_s0 = DK;
-				end
+			end
 			2: begin // PLAY
 				o_s7 = P;
 				if(speedStat == 0) begin
@@ -115,11 +115,12 @@ module SevenHexDecoder(
 					o_s5 = S;
 					if(speedStat == 2) begin o_s4 = NE; end
 				end
+			end
 			3: begin // RECORD
 				o_s7 = R;
 				o_s6 = E;
 				o_s5 = C;
-				end
+			end
 			4: begin // PAUSE
 				o_s7 = P;
 				o_s6 = A;
@@ -128,8 +129,8 @@ module SevenHexDecoder(
 				o_s3 = E;
 				o_s1 = DK;
 				o_s0 = DK;
-				end
-			default: begin end;
+			end
+			default: begin end
 		endcase
 	end
 endmodule

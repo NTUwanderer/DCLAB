@@ -14,7 +14,7 @@ module Recorder(
 	logic done_r, done_w;
 	logic [3:0] bitnum_r, bitnum_w;
 	logic [15:0] data_r, data_w;
-	logic [19:0] position_r, position_w
+	logic [19:0] position_r, position_w;
 
 	assign o_SRAM_WE = ~(state_r == S_WRITE);
 	assign o_SRAM_DATA = data_r;

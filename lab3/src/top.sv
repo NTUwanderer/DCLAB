@@ -40,6 +40,8 @@ module top(
 	logic[19:0] pos_r, pos_w;
 	logic[19:0] maxPos_r, maxPos_w;
 	logic[4:0] speedtoDac;
+	logic[3:0] tmp;
+	logic[19:0] p_addr, r_addr;
 
 	assign o_timer = pos_r[18:15]; //32k ~ 2^15
 	assign o_state = state_r;
@@ -48,10 +50,12 @@ module top(
 	assign SRAM_CE_N = 0;
 	assign SRAM_UB_N = 0;
 	assign SRAM_LB_N = 0;
-	assign speedtoDac = {speed_stat_r[1],(speed_r-1)[2:0]};
+	assign tmp = speed_r - 1;
+	assign speedtoDac = {speed_stat_r[1],tmp[2:0]};
+	assign SRAM_ADDR = (state_r == S_PLAY)? p_addr : r_addr;
 
 	I2CManager i2cM(
-		.i_input(startI_r),
+		.i_start(startI_r),
 		.i_clk(i_clk),
 		.i_rst(i_rst),
 		.o_finished(doneI),
@@ -59,7 +63,7 @@ module top(
 		.o_sdat(I2C_SDAT)
 	);
 
-	Record adc(
+	Recorder adc(
 		.i_record(startR_r),
 		.i_ADCLRCK(ADCLRCK),
 		.i_ADCDAT(ADCDAT),
@@ -67,11 +71,21 @@ module top(
 		.o_SRAM_WE(SRAM_WE_N),
 		.o_SRAM_DATA(SRAM_DQ),
 		.o_done(doneR),
-		.o_sram_addr(SRAM_ADDR)
+		.o_SRAM_ADDR(r_addr)
 	);
 
-	Play dac(
-
+	Player dac(
+		.i_play(startP_r),
+		.i_start_pos(pos_r),
+		.i_end_pos(maxPos_r),
+		.i_speed(speedtoDac),
+		.i_DACLRCK(DACLRCK),
+		.i_BCLK(BCLK),
+		.i_SRAM_DATA(SRAM_DATA),
+		.o_SRAM_OE(SRAM_OE_N),
+		.o_SRAM_ADDR(p_addr),
+		.o_DACDAT(DACDAT),
+		.o_done(doneP)
 	);
 
 always_comb begin
@@ -85,7 +99,7 @@ always_comb begin
 	maxPos_w = maxPos_r;
 
 	case(state_r)
-		S_INIT: begin 
+		S_INIT: begin
 			startI_w = 1;
 			//call I2CManager
 
@@ -101,7 +115,7 @@ always_comb begin
 			startP_w = 0;
 			pos_w = 0;
 			if(i_start) begin
-				if(SW01) begin
+				if(i_switch) begin
 					state_w = S_PLAY;
 				end else begin
 					state_w = S_RECORD;
@@ -111,8 +125,8 @@ always_comb begin
 
 		S_RECORD: begin
 			startR_w = 1;
-			pos_w = SRAM_ADDR;
-			maxPos_w = SRAM_ADDR;
+			pos_w = r_addr;
+			maxPos_w = r_addr;
 			// call adc
 
 			if(i_stop || doneR) begin
@@ -123,7 +137,7 @@ always_comb begin
 
 		S_PLAY: begin
 			startP_w = 1;
-			pos_w = SRAM_ADDR;
+			pos_w = p_addr;
 			// call dac
 
 			if(i_start) begin

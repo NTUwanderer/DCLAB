@@ -39,6 +39,7 @@ module top(
 	logic[3:0] speed_r, speed_w;
 	logic[19:0] pos_r, pos_w;
 	logic[19:0] maxPos_r, maxPos_w;
+	logic[4:0] speedtoDac;
 
 	assign o_timer = pos_r[18:15]; //32k ~ 2^15
 	assign o_state = state_r;
@@ -47,6 +48,7 @@ module top(
 	assign SRAM_CE_N = 0;
 	assign SRAM_UB_N = 0;
 	assign SRAM_LB_N = 0;
+	assign speedtoDac = {speed_stat_r[1],(speed_r-1)[2:0]};
 
 	I2CManager i2cM(
 		.i_input(startI_r),
@@ -129,19 +131,21 @@ always_comb begin
 				if(speed_stat_r == S_NORMAL) begin
 					speed_stat_w = S_FAST;
 					speed_w = 2;
-				end else if(speed_r <= 8) begin
+				end else if(speed_r < 8) begin
 					speed_w = speed_r + 1;
 				end else if(S_SLOW && speed_r == 2) begin
 					speed_stat_w = S_NORMAL;
+					speed_w = 1;
 				end
 			end else if(i_down) begin
 				if(speed_stat_r == S_NORMAL) begin
 					speed_stat_w = S_SLOW;
 					speed_w = 2;
-				end else if(speed_r <= 8) begin
+				end else if(speed_r < 8) begin
 					speed_w = speed_r + 1;
 				end else if(S_FAST && speed_r == 2) begin
 					speed_stat_w = S_NORMAL;
+					speed_w = 1;
 				end
 			end
 		end

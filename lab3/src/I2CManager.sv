@@ -4,6 +4,7 @@ module I2CManager (
     input i_rst,
     output o_finished,
     output o_sclk,
+    output[1:0] o_ini_state,
     inout o_sdat
 );
 
@@ -23,7 +24,8 @@ module I2CManager (
     typedef enum {
         S_IDLE,
         S_BUFF,
-        S_WAIT
+        S_WAIT,
+        S_END
     } State;
 
     State state_r, state_w;
@@ -46,6 +48,7 @@ module I2CManager (
     );
 
     assign o_finished = o_finished_r;
+    assign o_ini_state = state_r;
 
     always_comb begin
         state_w = state_r;
@@ -60,22 +63,24 @@ module I2CManager (
             case (state_r)
                 S_IDLE: begin
                     state_w = S_BUFF;
-                    startS_w = 1;
                     o_finished_w = 0;
+                    counter_w = 0;
                 end
 
                 S_BUFF: begin
                     buff_count_w = buff_count_r + 1;
+                    startS_w = 1;
                     if (buff_count_r == 7) begin
                         state_w = S_WAIT;
                         buff_count_w = 0;
+                        startS_w = 0;
                     end
                 end
 
                 S_WAIT: begin
                     if (s_finished) begin
-                        startS_w = 1;
                         counter_w = counter_r + 1;
+                        state_w = S_BUFF;
                         case (counter_r)
                             0: data_w[15:0] = AnaAudPCtrl;
                             1: data_w[15:0] = DigAudPCtrl;
@@ -84,7 +89,7 @@ module I2CManager (
                             4: data_w[15:0] = SamplingCtrl;
                             5: data_w[15:0] = ActiveCtrl;
                             default: begin
-                                state_w = S_IDLE;
+                                state_w = S_END;
                                 data_w = resetBits;
                                 startS_w = 0;
                                 o_finished_w = 1;
@@ -93,6 +98,10 @@ module I2CManager (
                     end else begin
                         startS_w = 0;
                     end
+                end
+
+                S_END: begin
+                    o_finished_w = 1;
                 end
 
             endcase

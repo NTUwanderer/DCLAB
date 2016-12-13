@@ -27,7 +27,8 @@ module top(
 	output [4:0] o_timer,
 	output [2:0] o_state,
 	output [1:0] o_speedStat,
-	output [3:0] o_speed
+	output [3:0] o_speed,
+	output [1:0] o_ini_state
 );
 
 	enum { S_INIT, S_IDLE, S_PLAY, S_RECORD, S_PAUSE } state_r, state_w;
@@ -57,11 +58,12 @@ module top(
 
 	I2CManager i2cM(
 		.i_start(startI_r),
-		.i_clk(i_clk),
+		.i_clk(i_clk2),
 		.i_rst(i_rst),
 		.o_finished(doneI),
 		.o_sclk(I2C_SCLK),
-		.o_sdat(I2C_SDAT)
+		.o_sdat(I2C_SDAT),
+		.o_ini_state(o_ini_state)
 	);
 
 	Recorder adc(
@@ -188,7 +190,7 @@ always_ff @(posedge i_clk or posedge i_rst) begin
 	if(i_rst) begin
 		state_r <= S_INIT;
 		speed_stat_r <= S_NORMAL;
-		startI_r <= 0;
+		startI_r <= 1;
 		startP_r <= 0;
 		startR_r <= 0;
 		speed_r <= 1;
@@ -199,7 +201,7 @@ always_ff @(posedge i_clk or posedge i_rst) begin
 		speed_stat_r <= speed_stat_w;
 		startI_r <= startI_w;
 		startP_r <= startP_w;
-		startR_r <= startP_r;
+		startR_r <= startP_w;
 		speed_r <= speed_w;
 		pos_r <= pos_w;
 		maxPos_r <= maxPos_w;

@@ -3,6 +3,7 @@ module SevenHexDecoder(
 	input [2:0] state,
 	input [1:0] speedStat,
 	input [3:0] speed,
+	input [1:0] iniState,
 	output logic [6:0] o_s0,
 	output logic [6:0] o_s1,
 	output logic [6:0] o_s2,
@@ -92,8 +93,24 @@ module SevenHexDecoder(
 				o_s7 = D1;
 				o_s6 = N;
 				o_s5 = D1;
-				o_s1 = DK;
-				o_s0 = DK;
+				case(iniState)
+					0: begin
+						o_s1 = D1;
+						o_s0 = D0;
+					end
+					1: begin
+						o_s1 = D8;
+						o_s0 = U;
+					end
+					2: begin
+						o_s1 = E;
+						o_s0 = A;
+					end
+					3: begin
+						o_s1 = E;
+						o_s0 = N;
+					end
+				endcase
 			end
 			1: begin // IDLE
 				o_s7 = D1;

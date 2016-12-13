@@ -65,6 +65,7 @@ module I2CManager (
                 end
 
                 S_BUFF: begin
+                    buff_count_w = buff_count_r + 1;
                     if (buff_count_r == 7) begin
                         state_w = S_WAIT;
                         buff_count_w = 0;

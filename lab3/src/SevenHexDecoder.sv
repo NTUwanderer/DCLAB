@@ -33,6 +33,7 @@ module SevenHexDecoder(
 	parameter C  = 7'b1000110;
 	parameter E  = 7'b0000110;
 	parameter L  = 7'b1000111;
+	parameter N  = 7'b0101011;
 	parameter P  = 7'b0001100;
 	parameter R  = 7'b1001110;
 	parameter S  = 7'b0010010;
@@ -87,6 +88,13 @@ module SevenHexDecoder(
 		endcase
 
 		case(state)
+			0: begin // INIT
+				o_s7 = D1;
+				o_s6 = N;
+				o_s5 = D1;
+				o_s1 = DK;
+				o_s0 = DK;
+			end
 			1: begin // IDLE
 				o_s7 = D1;
 				o_s6 = D0;

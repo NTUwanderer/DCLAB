@@ -35,7 +35,7 @@ module I2CManager (
     logic s_finished;
     logic o_finished_r, o_finished_w;
 
-    I2CSender i2cS (
+    I2cSender i2cS (
         .i_start(startS_r),
         .i_data(data_r),
         .i_clk(i_clk),
@@ -71,7 +71,7 @@ module I2CManager (
                     end
                 end
 
-                S_WAIT begin
+                S_WAIT: begin
                     if (s_finished) begin
                         startS_w = 1;
                         counter_w = counter_r + 1;

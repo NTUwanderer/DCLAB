@@ -1,5 +1,3 @@
-`timescale 1ns/100ps
-
 module I2cSender (
     input i_start,
     input [23:0] i_data,
@@ -50,7 +48,7 @@ module I2cSender (
             S_INITIAL: begin
                 if (i_start == 1) begin
                     state_w = S_TRANSIT;
-                    o_finished = 0;
+                    o_finished_w = 0;
                     o_sdat_w = 0;
 
                     clk_count_w = 0;

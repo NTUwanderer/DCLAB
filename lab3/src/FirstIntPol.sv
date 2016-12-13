@@ -1,5 +1,6 @@
 module FirstIntPol (
     input i_bclk,
+    input i_next,
     input i_reset,
     input [2:0] i_speed,
     input [31:0] i_prev_dat,
@@ -42,78 +43,80 @@ module FirstIntPol (
         temp = 0;
         delta_w = delta_r;
 
-        case (state_r)
-            S_INIT: begin
-                speed_w = i_speed;
-                state_w = S_CALC;
-                counter_w = 1;
+        if (i_next) begin
+            case (state_r)
+                S_INIT: begin
+                    speed_w = i_speed;
+                    state_w = S_CALC;
+                    counter_w = 1;
 
-                Compare(i_prev_dat[31:16], i_dat[31:16], greaterL_w);
-                Compare(i_prev_dat[15:0], i_dat[15:0], greaterR_w);
-                
-                if (greaterL_w)     temp[31:16] = i_dat[31:16] - i_prev_dat[31:16];
-                else                temp[31:16] = i_prev_dat[31:16] - i_dat[31:16];
+                    Compare(i_prev_dat[31:16], i_dat[31:16], greaterL_w);
+                    Compare(i_prev_dat[15:0], i_dat[15:0], greaterR_w);
+                    
+                    if (greaterL_w)     temp[31:16] = i_dat[31:16] - i_prev_dat[31:16];
+                    else                temp[31:16] = i_prev_dat[31:16] - i_dat[31:16];
 
-                if (greaterR_w)     temp[15:0]  = i_dat[15:0]  - i_prev_dat[15:0];
-                else                temp[15:0]  = i_prev_dat[15:0]  - i_dat[15:0];
+                    if (greaterR_w)     temp[15:0]  = i_dat[15:0]  - i_prev_dat[15:0];
+                    else                temp[15:0]  = i_prev_dat[15:0]  - i_dat[15:0];
 
-                case (i_speed):
-                    0: begin
-                        delta_w = temp;
-                        state_w = S_INIT;
-                    end
-                    1: begin
-                        delta_w[31:16] = temp[31:16] / 2;
-                        delta_w[15:0]  = temp[15:0]  / 2;
-                    end
-                    2: begin
-                        delta_w[31:16] = temp[31:16] / 3;
-                        delta_w[15:0]  = temp[15:0]  / 3;
-                    end
-                    3: begin
-                        delta_w[31:16] = temp[31:16] / 4;
-                        delta_w[15:0]  = temp[15:0]  / 4;
-                    end
-                    4: begin
-                        delta_w[31:16] = temp[31:16] / 5;
-                        delta_w[15:0]  = temp[15:0]  / 5;
-                    end
-                    5: begin
-                        delta_w[31:16] = temp[31:16] / 6;
-                        delta_w[15:0]  = temp[15:0]  / 6;
-                    end
-                    6: begin
-                        delta_w[31:16] = temp[31:16] / 7;
-                        delta_w[15:0]  = temp[15:0]  / 7;
-                    end
-                    7: begin
-                        delta_w[31:16] = temp[31:16] / 8;
-                        delta_w[15:0]  = temp[15:0]  / 8;
-                    end
-                endcase
+                    case (i_speed):
+                        0: begin
+                            delta_w = temp;
+                            state_w = S_INIT;
+                        end
+                        1: begin
+                            delta_w[31:16] = temp[31:16] / 2;
+                            delta_w[15:0]  = temp[15:0]  / 2;
+                        end
+                        2: begin
+                            delta_w[31:16] = temp[31:16] / 3;
+                            delta_w[15:0]  = temp[15:0]  / 3;
+                        end
+                        3: begin
+                            delta_w[31:16] = temp[31:16] / 4;
+                            delta_w[15:0]  = temp[15:0]  / 4;
+                        end
+                        4: begin
+                            delta_w[31:16] = temp[31:16] / 5;
+                            delta_w[15:0]  = temp[15:0]  / 5;
+                        end
+                        5: begin
+                            delta_w[31:16] = temp[31:16] / 6;
+                            delta_w[15:0]  = temp[15:0]  / 6;
+                        end
+                        6: begin
+                            delta_w[31:16] = temp[31:16] / 7;
+                            delta_w[15:0]  = temp[15:0]  / 7;
+                        end
+                        7: begin
+                            delta_w[31:16] = temp[31:16] / 8;
+                            delta_w[15:0]  = temp[15:0]  / 8;
+                        end
+                    endcase
 
-                if (greaterL_w == 1'b1) intpol_dat_w[31:16] = i_prev_dat[31:16] + delta_w[31:16];
-                else                    intpol_dat_w[31:16] = i_prev_dat[31:16] - delta_w[31:16];
+                    if (greaterL_w == 1'b1) intpol_dat_w[31:16] = i_prev_dat[31:16] + delta_w[31:16];
+                    else                    intpol_dat_w[31:16] = i_prev_dat[31:16] - delta_w[31:16];
 
-                if (greaterR_w == 1'b1) intpol_dat_w[15:0]  = i_prev_dat[15:0]  + delta_w[15:0];
-                else                    intpol_dat_w[15:0]  = i_prev_dat[15:0]  - delta_w[15:0];
-            end
-
-            case S_CALC: begin
-                counter_w = counter_r + 1;
-
-                if (greaterL_r == 1'b1) intpol_dat_w[31:16] = intpol_dat_r[31:16] + delta_r[31:16];
-                else                    intpol_dat_w[31:16] = intpol_dat_r[31:16] - delta_r[31:16];
-
-                if (greaterR_r == 1'b1) intpol_dat_w[15:0]  = intpol_dat_r[15:0]  + delta_r[15:0];
-                else                    intpol_dat_w[15:0]  = intpol_dat_r[15:0]  - delta_r[15:0];
-
-                if (counter_r == (speed_r - 1)) begin
-                    state_w = S_INIT;
-                    counter_w = 0;
+                    if (greaterR_w == 1'b1) intpol_dat_w[15:0]  = i_prev_dat[15:0]  + delta_w[15:0];
+                    else                    intpol_dat_w[15:0]  = i_prev_dat[15:0]  - delta_w[15:0];
                 end
-            end
-        endcase
+
+                case S_CALC: begin
+                    counter_w = counter_r + 1;
+
+                    if (greaterL_r == 1'b1) intpol_dat_w[31:16] = intpol_dat_r[31:16] + delta_r[31:16];
+                    else                    intpol_dat_w[31:16] = intpol_dat_r[31:16] - delta_r[31:16];
+
+                    if (greaterR_r == 1'b1) intpol_dat_w[15:0]  = intpol_dat_r[15:0]  + delta_r[15:0];
+                    else                    intpol_dat_w[15:0]  = intpol_dat_r[15:0]  - delta_r[15:0];
+
+                    if (counter_r == (speed_r - 1)) begin
+                        state_w = S_INIT;
+                        counter_w = 0;
+                    end
+                end
+            endcase
+        end
     end
 
     always_ff @(posedge i_bclk) begin

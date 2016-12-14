@@ -142,6 +142,7 @@ module DE2_115(
 	logic[1:0] speedStat0;
 	logic[3:0] speed0;
 	logic[1:0] iniState0;
+	logic[1:0] recState0;
 	logic clk_100k;
 
 	altpll altpll0(
@@ -178,6 +179,7 @@ module DE2_115(
 		.speedStat(speedStat0),
 		.speed(speed0),
 		.iniState(iniState0),
+		.recState(recState0),
 		.o_s0(HEX0),
 		.o_s1(HEX1),
 		.o_s2(HEX2),
@@ -215,7 +217,8 @@ module DE2_115(
 		.o_state(state0),
 		.o_speedStat(speedStat0),
 		.o_speed(speed0),
-		.o_ini_state(iniState0)
+		.o_ini_state(iniState0),
+		.o_rec_state(recState0)
 	);
 
 endmodule

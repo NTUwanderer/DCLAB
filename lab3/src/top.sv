@@ -28,7 +28,8 @@ module top(
 	output [2:0] o_state,
 	output [1:0] o_speedStat,
 	output [3:0] o_speed,
-	output [1:0] o_ini_state
+	output [1:0] o_ini_state,
+	output [1:0] o_rec_state
 );
 
 	enum { S_INIT, S_IDLE, S_PLAY, S_RECORD, S_PAUSE } state_r, state_w;
@@ -74,7 +75,8 @@ module top(
 		.o_SRAM_WE(SRAM_WE_N),
 		.o_SRAM_DATA(SRAM_DQ),
 		.o_done(doneR),
-		.o_SRAM_ADDR(r_addr)
+		.o_SRAM_ADDR(r_addr),
+		.o_REC_STATE(o_rec_state)
 	);
 
 	Player dac(

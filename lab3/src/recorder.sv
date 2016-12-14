@@ -6,7 +6,8 @@ module Recorder(
 	output o_SRAM_WE,
 	output [15:0] o_SRAM_DATA,
 	output o_done,
-	output [19:0] o_SRAM_ADDR
+	output [19:0] o_SRAM_ADDR,
+	output [1:0] o_REC_STATE
 );
 	enum { S_IDLE, S_WAIT, S_WRITE, S_DONE } state_r, state_w;
 	// logic state_r, state_w;
@@ -20,6 +21,7 @@ module Recorder(
 	assign o_SRAM_DATA = data_r;
 	assign o_done = done_r;
 	assign o_SRAM_ADDR = position_r;
+	assign o_REC_STATE = state_r;
 
 	// Assignments
 	always_ff @( posedge i_BCLK ) begin

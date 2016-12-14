@@ -141,7 +141,7 @@ module Player(
 
 				if(pre_LRCLK_r == 1 && i_DACLRCK == 0)		state_w = S_WRITE_LEFT;
 				else if(pre_LRCLK_r == 0 && i_DACLRCK == 1)	state_w = S_WRITE_RIGHT;
-				if(i_speed[3] && intpo_num_r == 0) state_w = S_READ;
+				if(is_intpo_r && intpo_num_r == 0) state_w = S_READ;
 			end
 
 			S_WRITE_LEFT: begin 
@@ -169,7 +169,7 @@ module Player(
 						bitnum_w = bitnum_r + 1;
 						if(bitnum_r == 15) begin
 							intpo_num_w = intpo_num_r - 1; // Update the interpolation number
-							intpo_next_w = 1; // Get the next interpolation signal
+							intpo_next_w = 1; // Request the next interpolation signal
 							state_w = S_WAIT;
 						end
 					end else begin 

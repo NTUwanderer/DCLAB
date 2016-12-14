@@ -10,14 +10,13 @@ module Recorder(
 	output [1:0] o_REC_STATE
 );
 	enum { S_IDLE, S_WAIT, S_WRITE, S_DONE } state_r, state_w;
-	// logic state_r, state_w;
 	logic pre_LRCLK_r, pre_LRCLK_w;
 	logic done_r, done_w;
 	logic [3:0] bitnum_r, bitnum_w;
 	logic [15:0] data_r, data_w;
 	logic [19:0] position_r, position_w;
 
-	assign o_SRAM_WE = ~(state_r == S_WRITE);
+	assign o_SRAM_WE = (state_r != S_WRITE);
 	assign o_SRAM_DATA = data_r;
 	assign o_done = done_r;
 	assign o_SRAM_ADDR = position_r;

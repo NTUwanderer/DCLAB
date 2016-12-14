@@ -46,7 +46,7 @@ module top(
 	logic[3:0] tmp;
 	logic[19:0] p_addr, r_addr;
 
-	assign o_timer = pos_r[18:15]; //32k ~ 2^15
+	assign o_timer = pos_r[19:15]; //32k ~ 2^15
 	assign o_state = state_r;
 	assign o_speedStat = speed_stat_r;
 	assign o_speed = speed_r;
@@ -85,8 +85,8 @@ module top(
 		.i_end_pos(maxPos_r),
 		.i_speed(speedtoDac),
 		.i_DACLRCK(DACLRCK),
-		.i_BCLK(BCLK),
-		.i_SRAM_DATA(SRAM_DATA),
+		.i_BCLK(i_clk),
+		.i_SRAM_DATA(SRAM_DQ),
 		.o_SRAM_OE(SRAM_OE_N),
 		.o_SRAM_ADDR(p_addr),
 		.o_DACDAT(DACDAT),
@@ -217,7 +217,7 @@ always_ff @(posedge i_clk or posedge i_rst) begin
 		speed_stat_r <= speed_stat_w;
 		startI_r <= startI_w;
 		startP_r <= startP_w;
-		startR_r <= startP_w;
+		startR_r <= startR_w;
 		speed_r <= speed_w;
 		pos_r <= pos_w;
 		maxPos_r <= maxPos_w;

@@ -180,6 +180,7 @@ module DE2_115(
 		.speed(speed0),
 		.iniState(iniState0),
 		.recState(recState0),
+		.i_sram_data(SRAM_DQ),
 		.o_s0(HEX0),
 		.o_s1(HEX1),
 		.o_s2(HEX2),

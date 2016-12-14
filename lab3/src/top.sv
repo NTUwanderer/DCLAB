@@ -29,7 +29,8 @@ module top(
 	output [1:0] o_speedStat,
 	output [3:0] o_speed,
 	output [1:0] o_ini_state,
-	output [1:0] o_rec_state
+	output [1:0] o_rec_state,
+	output [15:0] o_pdata
 );
 
 	enum { S_INIT, S_IDLE, S_PLAY, S_RECORD, S_PAUSE } state_r, state_w;
@@ -45,6 +46,7 @@ module top(
 	logic[4:0] speedtoDac;
 	logic[3:0] tmp;
 	logic[19:0] p_addr, r_addr;
+	logic[15:0] p_data, r_data;
 
 	assign o_timer = pos_r[19:15]; //32k ~ 2^15
 	assign o_state = state_r;
@@ -56,6 +58,8 @@ module top(
 	assign tmp = speed_r - 1;
 	assign speedtoDac = {speed_stat_r[1],tmp[2:0]};
 	assign SRAM_ADDR = (state_r == S_PLAY)? p_addr : r_addr;
+	assign SRAM_DQ = (state_r == S_PLAY)? 16'bz : r_data;
+	assign p_data = (state_r == S_PLAY)? SRAM_DQ : 16'bz;
 
 	I2CManager i2cM(
 		.i_start(startI_r),
@@ -73,7 +77,7 @@ module top(
 		.i_ADCDAT(ADCDAT),
 		.i_BCLK(i_clk),
 		.o_SRAM_WE(SRAM_WE_N),
-		.o_SRAM_DATA(SRAM_DQ),
+		.o_SRAM_DATA(r_data),
 		.o_done(doneR),
 		.o_SRAM_ADDR(r_addr),
 		.o_REC_STATE(o_rec_state)
@@ -86,11 +90,12 @@ module top(
 		.i_speed(speedtoDac),
 		.i_DACLRCK(DACLRCK),
 		.i_BCLK(i_clk),
-		.i_SRAM_DATA(SRAM_DQ),
+		.i_SRAM_DATA(p_data),
 		.o_SRAM_OE(SRAM_OE_N),
 		.o_SRAM_ADDR(p_addr),
 		.o_DACDAT(DACDAT),
-		.o_done(doneP)
+		.o_done(doneP),
+		.o_SRAM_DATA(o_pdata)
 	);
 
 always_comb begin

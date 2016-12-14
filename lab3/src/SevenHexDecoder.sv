@@ -5,7 +5,9 @@ module SevenHexDecoder(
 	input [3:0] speed,
 	input [1:0] iniState,
 	input [1:0] recState,
+	input [2:0] playState,
 	input [15:0] i_sram_data,
+	input [3:0] speedtoDac,
 	output logic [6:0] o_s0,
 	output logic [6:0] o_s1,
 	output logic [6:0] o_s2,
@@ -124,6 +126,24 @@ module SevenHexDecoder(
 				o_s4 = E;
 				o_s1 = DK;
 				o_s0 = DK;
+				case(speedtoDac) 
+					0: begin o_s3 = D0; end
+					1: begin o_s3 = D1; end
+					2: begin o_s3 = D2; end
+					3: begin o_s3 = D3; end
+					4: begin o_s3 = D4; end
+					5: begin o_s3 = D5; end
+					6: begin o_s3 = D6; end
+					7: begin o_s3 = D7; end
+					8: begin o_s3 = D8; end
+					9: begin o_s3 = D9; end
+					10: begin o_s3 = A; end
+					11: begin o_s3 = B; end
+					12: begin o_s3 = C; end
+					13: begin o_s3 = D; end
+					14: begin o_s3 = E; end
+					15: begin o_s3 = F; end
+				endcase
 			end
 			2: begin // PLAY
 				o_s7 = P;
@@ -145,6 +165,16 @@ module SevenHexDecoder(
 					o_s5 = S;
 					if(speedStat == 2) begin o_s4 = NE; end
 				end
+				case(playState) 
+					0: begin o_s3 = D0; end
+					1: begin o_s3 = D1; end
+					2: begin o_s3 = D2; end
+					3: begin o_s3 = D3; end
+					4: begin o_s3 = D4; end
+					5: begin o_s3 = D5; end
+					6: begin o_s3 = D6; end
+					7: begin o_s3 = D7; end
+				endcase
 			end
 			3: begin // RECORD
 				// o_s7 = R;
@@ -173,6 +203,7 @@ module SevenHexDecoder(
 					13: begin o_s3 = D; end
 					14: begin o_s3 = E; end
 					15: begin o_s3 = F; end
+				endcase
 			end
 			4: begin // PAUSE
 				o_s7 = P;

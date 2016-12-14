@@ -13,7 +13,9 @@ module Player(
 	output o_SRAM_OE,
 	output [19:0] o_SRAM_ADDR,
 	output o_DACDAT,
-	output o_done
+	output o_done,
+
+	output [2:0] o_state
 );
 
 	typedef enum {
@@ -52,10 +54,11 @@ module Player(
 		.o_intpol_dat(i_intpol_dat)
 	);
 
-	assign o_SRAM_OE = ~(state_r == S_READ);
+	assign o_SRAM_OE = (state_r != S_READ);
 	assign o_SRAM_ADDR = position_r;
 	assign o_DACDAT = dacdat_r;
 	assign o_done = done_r;
+	assign o_state = state_r;
 
 	always_ff @( posedge i_BCLK ) begin 
 		pre_LRCLK_r <= pre_LRCLK_w;
@@ -66,7 +69,7 @@ module Player(
 		bitnum_r <= bitnum_w;
 		done_r <= done_w;
 		dacdat_r <= dacdat_w;
-		pre_fetched_r <= pre_LRCLK_w;
+		pre_fetched_r <= pre_fetched_w;
 		is_intpo_r <= is_intpo_w;
 		intpo_next_r <= intpo_next_w;
 		intpo_reset_r <= intpo_reset_w;
@@ -124,7 +127,7 @@ module Player(
 				else				position_w = position_r + i_speed[2:0] + 1;  // Speed up will skip
 
 				// Terminate condition
-				if(position_r - i_speed[2:0] - 1 >= i_end_pos - i_speed[2:0] - 1) begin
+				if((position_r >= i_end_pos - i_speed[2:0] - 1) && pre_fetched_r) begin
 					done_w = 1;
 					state_w = S_DONE;
 					position_w = position_r - i_speed[2:0] - 1;
@@ -173,9 +176,13 @@ module Player(
 						dacdat_w = curr_data_r[16 + bitnum_r];
 						bitnum_w = bitnum_r + 1;
 						if(bitnum_r == 15) begin
-							is_intpo_w = i_speed[3]; // Starting from the next loop, it is interpolated signal
-							intpo_next_w = i_speed[3]; // Request the next interpolation signal
-							state_w = S_WAIT;
+							if (i_speed[3]) begin
+								is_intpo_w = 1; // Starting from the next loop, it is interpolated signal
+								intpo_next_w = 1; // Request the next interpolation signal
+								state_w = S_WAIT;
+							end else begin
+								state_w = S_READ;
+							end
 						end
 					end
 				end

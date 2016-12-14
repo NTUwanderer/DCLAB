@@ -143,7 +143,9 @@ module DE2_115(
 	logic[3:0] speed0;
 	logic[1:0] iniState0;
 	logic[1:0] recState0;
+	logic[2:0] playState0;
 	logic clk_100k;
+	logic[3:0] speedtoDac0;
 
 	altpll altpll0(
 		.altpll_0_c0_clk(AUD_XCK), // 12MHz
@@ -180,7 +182,9 @@ module DE2_115(
 		.speed(speed0),
 		.iniState(iniState0),
 		.recState(recState0),
+		.playState(playState0),
 		.i_sram_data(SRAM_DQ),
+		.speedtoDac(speedtoDac0),
 		.o_s0(HEX0),
 		.o_s1(HEX1),
 		.o_s2(HEX2),
@@ -219,7 +223,9 @@ module DE2_115(
 		.o_speedStat(speedStat0),
 		.o_speed(speed0),
 		.o_ini_state(iniState0),
-		.o_rec_state(recState0)
+		.o_rec_state(recState0),
+		.o_play_state(playState0),
+		.o_speedtoDac(speedtoDac0)
 	);
 
 endmodule

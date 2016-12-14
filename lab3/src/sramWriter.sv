@@ -1,8 +1,8 @@
-module(
+module SRAMWriter(
 	input i_clk,
 	input i_rst,
 	input i_start,
-	input[15:0] i_SRAM_DATA,
+	output[15:0] o_SRAM_DATA,
 	output o_SRAM_OE,
 	output o_SRAM_WE,
 	output[19:0] o_SRAM_ADDR,
@@ -14,8 +14,8 @@ module(
 
 	assign o_SRAM_DATA = i_SRAM_DATA;
 	assign o_SRAM_ADDR = addr_r;
-	assign o_SRAM_WE = (state_r == S_RUN);
-	assign o_SRAM_OE = (state_r != S_RUN);
+	assign o_SRAM_WE = (state_r != S_RUN);
+	assign o_SRAM_OE = (state_r == S_RUN);
 
 always_comb begin
 	counter_w = counter_r + 1;

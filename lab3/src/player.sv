@@ -42,9 +42,9 @@ module Player(
 	logic [2:0] intpo_num_r, intpo_num_w;
 
 	IntPol intpo(
+		.i_bclk(i_BCLK),
 		.i_next(intpo_next_r),
 		.i_reset(intpo_reset_r),
-		.i_bclk(i_BCLK),
 		.i_intpol(i_intpol),
 		.i_speed(i_speed[2:0]),
 		.i_prev_dat(curr_data_r),

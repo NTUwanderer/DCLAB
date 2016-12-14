@@ -2,7 +2,7 @@ module IntPol (
     input i_bclk,
     input i_next,
     input i_reset,
-    input i_first,
+    input i_intpol,
     input [2:0] i_speed,
     input [31:0] i_prev_dat,
     input [31:0] i_dat,
@@ -38,8 +38,10 @@ module IntPol (
     assign o_intpol_dat = intpol_dat_r;
 
     always_comb begin
+        state_w = state_r;
         intpol_dat_w = intpol_dat_r;
         speed_w = speed_r;
+        counter_w = counter_r;
         greaterL_w = greaterL_r;
         greaterR_w = greaterR_r;
         temp = 0;
@@ -53,7 +55,7 @@ module IntPol (
 
                 intpol_dat_w = i_prev_dat;
 
-                if (i_first) begin
+                if (i_intpol) begin
                     Compare(i_prev_dat[31:16], i_dat[31:16], greaterL_w);
                     Compare(i_prev_dat[15:0], i_dat[15:0], greaterR_w);
                     

@@ -1,0 +1,8 @@
+.absolute {
+	position: absolute;
+	right: 200px;
+}
+
+.middle {
+	min-height: 70vh;
+}

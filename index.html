@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="final_presentation/css/reveal.css">
+		<link rel="stylesheet" href="final_presentation/css/theme/black.css">
+		<link rel="stylesheet" href="final_presentation/css/mycss.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="final_presentation/lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h2>Visuaudio</h2>
+					<h4>Team 05</h4>
+					<p><small>
+						B03901018 楊程皓 <br>
+						B03901034 吳泓霖 <br>
+						B03901052 王傑生 <br>
+					</small></p>
+				</section>
+				<section>
+					<h2>Functions</h2>
+					<ol>
+						<li>Spectrum</li>
+						<li>Equalizer</li>
+						<li>Visualizer</li>
+					</ol>
+				</section>
+				<section>
+					<h2>Theory</h2>
+				</section>
+				<section>
+					<section>
+						<h3>Spectrum</h3>
+						<img class="middle" src="final_presentation/pictures/spectrum.jpg" />	
+					</section>
+					<section>
+						<h3>Short-time Fourier Transform</h3>
+					</section>
+					<section>
+						<p>The short-time Fourier transform is a Fourier-related transform used to determine the sinusoidal frequency and phase content of local sections of a signal as it changes over time.
+						</p>
+					</section>
+					<section>
+						<p>In practice, the procedure for computing STFTs is to divide a longer time signal into shorter segments of equal length and then compute the Fourier transform separately on each shorter segment. This reveals the Fourier spectrum on each shorter segment. One then usually plots the changing spectra as a function of time.</p>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h3>Equalizer</h3>
+						<img class="middle" src="final_presentation/pictures/equalizer.png" />	
+					</section>
+					<section>
+						<h3>IIR Biquad</h3>
+					</section>
+					<section>
+						<p>In signal processing, a digital biquad filter is a second-order recursive linear filter, containing two poles and two zeros. "Biquad" is an abbreviation of "biquadratic", which refers to the fact that in the Z domain. </p>
+					</section>
+					<section>
+						<p>Its transfer function is the ratio of two quadratic functions:</p>
+						<img style="padding:30px" src="final_presentation/pictures/biquad_eq.png" />
+					</section>
+				</section>
+				<section>
+					<section>
+						<h3>Visualizer</h3>
+						<img class="middle" src="final_presentation/pictures/visualizer.jpg" />	
+					</section>
+					<section>
+						<h3>Beat Detection</h3>
+					</section>
+					<section>
+						<p>In signal analysis, beat detection is using computer software or computer hardware to detect the beat of a musical score. There are many methods available and beat detection is always a tradeoff between accuracy and speed. Beat detectors are common in music visualization software such as some media player plugins.</p>
+					</section>
+					<section>
+						<p>The algorithms used may utilize simple statistical models based on sound energy or may involve sophisticated comb filter networks or other means. They may be fast enough to run in real time or may be so slow as to only be able to analyze short sections of songs.</p>
+					</section>
+				</section>
+				<section>
+					<h3>Structure</h3>
+					<img style="padding:30px" src="final_presentation/pictures/kiminonawa.png" />
+				</section>
+			</div>
+		</div>
+
+		<script src="final_presentation/lib/js/head.min.js"></script>
+		<script src="final_presentation/js/reveal.js"></script>
+
+		<script>
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				history: true,
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>

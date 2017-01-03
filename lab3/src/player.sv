@@ -139,8 +139,25 @@ module Player(
 				intpo_next_w = 0; // Stop the next interpolation signal in the next clock
 				intpo_reset_w = 0;  // Stop the reset
 
-				if(pre_LRCLK_r == 1 && i_DACLRCK == 0)		state_w = S_WRITE_LEFT;
-				else if(pre_LRCLK_r == 0 && i_DACLRCK == 1)	state_w = S_WRITE_RIGHT;
+				if(pre_LRCLK_r == 1 && i_DACLRCK == 0) begin
+					if(is_intpo_r) begin
+						dacdat_w = i_intpol_dat[bitnum_r];
+						bitnum_w = bitnum_r + 1;
+					end else begin 
+						dacdat_w = curr_data_r[bitnum_r];
+						bitnum_w = bitnum_r + 1;
+					end
+					state_w = S_WRITE_LEFT;
+				end else if(pre_LRCLK_r == 0 && i_DACLRCK == 1)	begin
+					if(is_intpo_r) begin
+						dacdat_w = i_intpol_dat[16 + bitnum_r];
+						bitnum_w = bitnum_r + 1;
+					end else begin 
+						dacdat_w = curr_data_r[16 + bitnum_r];
+						bitnum_w = bitnum_r + 1;
+					end
+					state_w = S_WRITE_RIGHT;
+				end				
 				if(is_intpo_r && intpo_num_r == 0) state_w = S_READ;
 			end
 
